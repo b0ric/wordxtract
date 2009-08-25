@@ -1,0 +1,42 @@
+Introduction
+============
+
+WordXtract is a program to pick up list of unique words
+from any plain text or .srt file. Some words can be excluded
+according to words in your dictionary
+
+Compilation
+===========
+
+To compile this package You should have
+
+    gtk+-2.0 >= 2.12.0
+
+The latest version of GTK+ can be found at http://ftp.gnome.org
+Executive summary:
+
+    ./configure
+    make
+    make install
+
+Running
+=======
+
+You can run application simply by typing 
+
+    $wordxtract
+
+Before you can add words to your dictionary and/or process
+files you want. Also you can save processed text or/and 
+list of words (words saving options can be found in 
+Preferences manu item). After installation You also can
+maintain basic dictionary which is in project root directory
+by commands (assuming you are in project root dir)
+
+    $mkdir ~/.wordxtract	#*
+    $cp dict ~/.wordxtract/
+
+* Note, that .wordxtract directory will be created
+at first run so, you maybe don't need to create it
+
+Enjoy!
