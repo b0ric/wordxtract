@@ -1,0 +1,7 @@
+#! /bin/sh
+
+cd po/ && intltool-update -r && cd .. \
+&& aclocal \
+&& autoheader \
+&& automake --gnu --add-missing \
+&& autoconf

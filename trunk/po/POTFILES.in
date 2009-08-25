@@ -1,0 +1,7 @@
+# List of source files containing translatable strings.
+# Please keep this file sorted alphabetically.
+
+src/confwin.c
+src/dictwin.c
+src/mainwin.c
+data/wordxtract.desktop.in
