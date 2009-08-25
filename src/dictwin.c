@@ -383,7 +383,7 @@ static void ok_btn_click(GtkWidget *widget, gpointer dict_win)
 	gtk_tree_model_get(GTK_TREE_MODEL(user_store_model), &iter, ICON_STR_COL, &stock_id, -1);
 	if (!strcmp(stock_id, "gtk-add")) {
 		gtk_tree_model_get(GTK_TREE_MODEL(user_store_model), &iter, WORD_COL, &word, -1);
-		add_word(dict, word);
+		dict = add_word(dict, word);
 		g_free(stock_id);
 		g_free(word);
 	}
