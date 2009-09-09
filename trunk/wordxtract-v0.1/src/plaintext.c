@@ -28,13 +28,12 @@ static char *get_line(FILE *);
 int process_plain_text(FILE *text)
 {
  int parse_res = 0;
- char *phrase;
+ char *phrase = NULL;
 
  while (!feof(text)) {
 	phrase = get_line(text);
 	parse_res = parseengphrase(phrase)||parse_res;
 	free(phrase);
-	phrase = NULL;
  }
  return parse_res;
 }
@@ -54,19 +53,25 @@ static char *get_line(FILE *name)
 		c = fgetc(name);
 		*buffer = c;
 		buffer++;
+		length++;
+		if (c == EOF)
+			*(buffer-1) = '\0';
 		if (c == '\n') {
+			/*we don't know whether there is enough space in buffer for '\0'*/
+			if (!(length < buflen)) {
+				bufcnt++;
+				buffer = realloc((char*)(buffer - (bufcnt - 1)*buflen), buflen*bufcnt);
+				buffer = buffer + (bufcnt - 1)*buflen;
+				length = 0;
+			}
 			*buffer = '\0';
 			break;
 		} else if (c == '\0')
 			break;
-		if (c == EOF)
-			*(buffer-1) = '\0';
-		else
-			length++;
 	} while ((c != EOF)&&(length < buflen));
 	bufcnt++;
  } while ((c != EOF)&&(c != '\n')&&(c != '\0'));
- buffer = buffer - (bufcnt - 2)*buflen - (length + 1);
+ buffer = buffer - (bufcnt - 2)*buflen - length;
  return buffer;
 }
 
