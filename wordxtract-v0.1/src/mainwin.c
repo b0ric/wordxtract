@@ -751,7 +751,7 @@ static void clear_btn_click(GtkWidget *widget, gpointer data)
 void clear_sentences()
 {
  GtkTextBuffer *buffer;
- gchar text[] = "\0";
+ gchar text[] = "";
 
  buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(sentences_text));
  gtk_text_buffer_set_text(buffer, text, -1);
