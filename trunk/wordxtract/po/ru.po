@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordxtract 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-25 14:52+0300\n"
+"POT-Creation-Date: 2009-09-13 14:54+0300\n"
 "PO-Revision-Date: 2009-08-24 14:58+0300\n"
 "Last-Translator: b0ris <b0ric.alex@gmail.com>\n"
 "Language-Team: Russian\n"
@@ -17,115 +17,119 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: ../src/confwin.c:61
+#: ../src/confwin.c:63
 msgid "WordXtract Preferences"
 msgstr "Настройки WordXtract"
 
 #. 'General' tab
-#: ../src/confwin.c:74
+#: ../src/confwin.c:76
 msgid "General"
 msgstr "Основные"
 
-#: ../src/confwin.c:85
+#: ../src/confwin.c:87
+msgid "Query on program exit"
+msgstr "Подтверждение при выходе из программы"
+
+#: ../src/confwin.c:92
 msgid "<b>Words saving options</b>"
 msgstr "<b>Сохранение списка слов</b>"
 
-#: ../src/confwin.c:91
+#: ../src/confwin.c:98
 msgid "Columns: "
 msgstr "Колонки: "
 
-#: ../src/confwin.c:98
+#: ../src/confwin.c:105
 msgid "Specify how many columns will be in the saved list of the words"
 msgstr "Укажите количество колонок из слов, которое будет в сохраненном файле"
 
-#: ../src/confwin.c:103
+#: ../src/confwin.c:110
 msgid "Field langth: "
 msgstr "Ширина поля: "
 
-#: ../src/confwin.c:111
+#: ../src/confwin.c:118
 msgid "Specify length of one field (in symbols) in the saved list of the words"
 msgstr ""
 "Укажите ширину поля (в символах) которая будет предоставляться каждому слову "
 "в сохраняемом файле"
 
 #. 'Analysing' tab
-#: ../src/confwin.c:118
+#: ../src/confwin.c:125
 msgid "Analyser"
 msgstr "Анализатор"
 
-#: ../src/confwin.c:135
+#: ../src/confwin.c:142
 msgid "Analyser language: "
 msgstr "Язык анализатора: "
 
-#: ../src/confwin.c:140
+#: ../src/confwin.c:147
 msgid "English"
 msgstr "Английский"
 
-#: ../src/confwin.c:143
+#: ../src/confwin.c:150
 msgid "Language of the text you want to analyse"
 msgstr "Язык текста который вы хотите проанализировать"
 
-#: ../src/confwin.c:146
+#: ../src/confwin.c:153
 msgid "Exclude words with cAPiTal letters"
 msgstr "Исключать слова с бОЛЬшИми буквами"
 
-#: ../src/confwin.c:151
+#: ../src/confwin.c:158
 msgid "Lower first capital in each sentence"
 msgstr "Делать прописной первую букву в предложении"
 
-#: ../src/confwin.c:156
+#: ../src/confwin.c:163
 msgid "<b>Quotes analysis</b>"
 msgstr "<b>Анализ слов с кавычками</b>"
 
-#: ../src/confwin.c:162
+#: ../src/confwin.c:169
 msgid "Exclude words with quotes"
 msgstr "Исключать слова с кавычками"
 
-#: ../src/confwin.c:170
+#: ../src/confwin.c:177
 msgid "Exclude 'quoted' words"
 msgstr "Исключать слова в 'кавычках'"
 
-#: ../src/confwin.c:176
+#: ../src/confwin.c:183
 msgid "Exclude words with 'quote in the beginning"
 msgstr "Исключать слова начинающиеся с 'кавычки"
 
-#: ../src/confwin.c:182
+#: ../src/confwin.c:189
 msgid "Exclude words with quo'te in the middle"
 msgstr "Исключать слова с кавы'чкой посередине"
 
-#: ../src/confwin.c:190
+#: ../src/confwin.c:197
 msgid "Exclude only part of the word after quo<s>'te</s>"
 msgstr "Исключать только слово после ка<s>'вычки</s>"
 
-#: ../src/confwin.c:200
+#: ../src/confwin.c:207
 msgid "Exclude words with quote' in the end"
 msgstr "Исключать слова с кавычкой' в конце"
 
-#: ../src/confwin.c:206
+#: ../src/confwin.c:213
 msgid "<b>Hyphen analysis</b>"
 msgstr "<b>Анализ слов с дефисом</b>"
 
-#: ../src/confwin.c:212
+#: ../src/confwin.c:219
 msgid "Exclude words with hyphens"
 msgstr "Исключать слова с дефисом"
 
-#: ../src/confwin.c:220
+#: ../src/confwin.c:227
 msgid "Exclude -hyphened- words"
 msgstr "Исключать слова в -дефисах-"
 
-#: ../src/confwin.c:226
+#: ../src/confwin.c:233
 msgid "Exclude words with -hyphen in the beginning"
 msgstr "Исключать слова начинающиеся с -дефиса"
 
-#: ../src/confwin.c:232
+#: ../src/confwin.c:239
 msgid "Exclude words with hy-phen in the middle"
 msgstr "Исключать слова с дефи-сом в середине"
 
-#: ../src/confwin.c:240
+#: ../src/confwin.c:247
 msgid "Exclude only part of the word after hy<s>-phen</s>"
 msgstr "Исключать только слово после де<s>-фиса</s>"
 
-#: ../src/confwin.c:250
+#: ../src/confwin.c:257
 msgid "Exclude words with hyphen- in the end"
 msgstr "Исключать слова с дефисом- в конце"
 
@@ -145,7 +149,7 @@ msgstr "Изменения словаря: "
 msgid "Add word: "
 msgstr "Добавить слово: "
 
-#: ../src/dictwin.c:166 ../src/mainwin.c:641
+#: ../src/dictwin.c:166 ../src/mainwin.c:643
 msgid "Add word to the dictionary"
 msgstr "Добавить слово в словарь"
 
@@ -342,12 +346,12 @@ msgstr "Сохранить список слов как..."
 msgid "Save text as..."
 msgstr "Сохранить текст как..."
 
-#: ../src/mainwin.c:545
+#: ../src/mainwin.c:547
 #, c-format
 msgid "Failed to open URI: %s\n"
 msgstr "Ошибка открытия URI: %s\n"
 
-#: ../src/mainwin.c:553
+#: ../src/mainwin.c:555
 msgid ""
 "WordXtract is a text and subtitle parser\n"
 " which shows list of unique words\n"
@@ -357,7 +361,7 @@ msgstr ""
 " и текстовых файлов которая создает список\n"
 " уникальных слов из данного файла."
 
-#: ../src/mainwin.c:555
+#: ../src/mainwin.c:557
 msgid ""
 "WordXtract is free software: you can\n"
 "redistribute it and/or modify it under the\n"
@@ -395,23 +399,23 @@ msgstr ""
 "General Public License along with WordXtract.\n"
 "If not, see <http://www.gnu.org/licenses/>."
 
-#: ../src/mainwin.c:572
+#: ../src/mainwin.c:574
 msgid "ru: Borisov Alexandr <b0ric.alex@gmail.com>"
 msgstr "ru: Борисов Алексадр <b0ric.alex@gmail.com>"
 
-#: ../src/mainwin.c:629
+#: ../src/mainwin.c:631
 msgid "Search word"
 msgstr "Искать слово"
 
-#: ../src/mainwin.c:633
+#: ../src/mainwin.c:635
 msgid "Show sentenses word appears in"
 msgstr "Показать предложения где встречается слово"
 
-#: ../src/mainwin.c:637
+#: ../src/mainwin.c:639
 msgid "Add to the dictionary"
 msgstr "Добавить слово в словарь"
 
-#: ../src/mainwin.c:782
+#: ../src/mainwin.c:784
 #, c-format
 msgid "Word '%s' was not found"
 msgstr "Слово '%s' было не найдено"

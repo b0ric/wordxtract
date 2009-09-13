@@ -56,6 +56,7 @@ typedef struct {
 } SaveOpt;
 
 /*application settings*/
+extern int exit_query;
 extern Language lang;
 extern SaveOpt save_user_words;
 

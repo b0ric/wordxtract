@@ -24,6 +24,8 @@
 
 static GtkWidget *conf_win;
 
+/*general*/
+static GtkWidget *exit_query_btn;
 /*saving controls*/
 static GtkWidget *col_counter;
 static GtkWidget *field_counter;
@@ -82,35 +84,40 @@ void create_conf_win()
  gtk_container_add(GTK_CONTAINER(gen_frame), gen_table);
  gtk_widget_show(gen_table);
 
+ exit_query_btn = gtk_check_button_new_with_label(_("Query on program exit"));
+ gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(exit_query_btn), (gboolean) exit_query);
+ gtk_table_attach_defaults(GTK_TABLE(gen_table), exit_query_btn, 0, 12, 0, 1);
+ gtk_widget_show(exit_query_btn);
+
  GtkWidget *save_label = gtk_label_new(_("<b>Words saving options</b>"));
  gtk_label_set_use_markup(GTK_LABEL(save_label), TRUE);
- gtk_table_attach_defaults(GTK_TABLE(gen_table), save_label, 0, 6, 0, 1);
+ gtk_table_attach_defaults(GTK_TABLE(gen_table), save_label, 0, 6, 1, 2);
  gtk_misc_set_alignment(GTK_MISC(save_label), 0, 0.5);
  gtk_widget_show(save_label);
 
  GtkWidget *col_label = gtk_label_new(_("Columns: "));
  gtk_misc_set_alignment(GTK_MISC(col_label), 0, 0.5);
- gtk_table_attach_defaults(GTK_TABLE(gen_table), col_label, 1, 4, 1, 2);
+ gtk_table_attach_defaults(GTK_TABLE(gen_table), col_label, 1, 4, 2, 3);
  gtk_widget_show(col_label);
 
  GtkObject *col_adjust = gtk_adjustment_new(save_user_words.columns, 1, 10, 1, 2, 0);
  col_counter = gtk_spin_button_new(GTK_ADJUSTMENT(col_adjust), 0.5, 0);
  gtk_widget_set_tooltip_text(col_counter, _("Specify how many columns will be in the saved list of the words"));
- gtk_table_attach_defaults(GTK_TABLE(gen_table), col_counter, 5, 7, 1, 2);
+ gtk_table_attach_defaults(GTK_TABLE(gen_table), col_counter, 5, 7, 2, 3);
  gtk_widget_show(col_counter);
 
  gboolean field_sens = (save_user_words.columns > 1) ? TRUE : FALSE;
  GtkWidget *field_label = gtk_label_new(_("Field langth: "));
  gtk_misc_set_alignment(GTK_MISC(field_label), 0, 0.5);
  gtk_widget_set_sensitive(field_label, field_sens);
- gtk_table_attach_defaults(GTK_TABLE(gen_table), field_label, 1, 4, 2, 3);
+ gtk_table_attach_defaults(GTK_TABLE(gen_table), field_label, 1, 4, 3, 4);
  gtk_widget_show(field_label);
 
  GtkObject *field_adjust = gtk_adjustment_new(save_user_words.col_width, 10, 100, 1, 10, 0);
  field_counter = gtk_spin_button_new(GTK_ADJUSTMENT(field_adjust), 0.5, 0);
  gtk_widget_set_tooltip_text(field_counter, _("Specify length of one field (in symbols) in the saved list of the words"));
  gtk_widget_set_sensitive(field_counter, field_sens);
- gtk_table_attach_defaults(GTK_TABLE(gen_table), field_counter, 5, 7, 2, 3);
+ gtk_table_attach_defaults(GTK_TABLE(gen_table), field_counter, 5, 7, 3, 4);
  gtk_widget_show(field_counter);
  gtk_notebook_append_page(GTK_NOTEBOOK(tabs), gen_frame, gen_label);
 
@@ -283,6 +290,7 @@ static void ok_btn_click(GtkWidget *widget, gpointer data)
  /*lang = */
  excl_w_capital = (int) GTK_TOGGLE_BUTTON(wcap_btn)->active;
  lower_first_capital = (int) GTK_TOGGLE_BUTTON(lower_first_cap)->active;
+ exit_query = (int) GTK_TOGGLE_BUTTON(exit_query_btn)->active;
  if (GTK_TOGGLE_BUTTON(wquot_btn)->active) {
 	quote.excl_symbolled = 1;
 	quote.excl_w_starting = 1;

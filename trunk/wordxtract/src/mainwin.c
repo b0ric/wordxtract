@@ -343,16 +343,16 @@ static void set_status_msg()
 
 static gint main_window_close(GtkWidget *widget, GdkEvent *event, gpointer main_window)
 {
- gint response = TRUE;
-
- GtkWidget *dialog = gtk_message_dialog_new(main_window, GTK_DIALOG_DESTROY_WITH_PARENT,
+ gboolean response = FALSE;
+ if (exit_query) {
+	GtkWidget *dialog = gtk_message_dialog_new(main_window, GTK_DIALOG_DESTROY_WITH_PARENT,
 								 GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, QUIT_MSG_TEXT); 
- gtk_window_set_title(GTK_WINDOW(dialog), QUIT_MSG_CAPTION);
- if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES)
-	response = FALSE;
- gtk_widget_destroy(dialog);
-
- return response;
+	gtk_window_set_title(GTK_WINDOW(dialog), QUIT_MSG_CAPTION);
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_NO)
+		response = TRUE;
+	gtk_widget_destroy(dialog);
+ }
+ return response;	
 }
 
 static void main_window_destroy(GtkWidget *widget, gpointer data)
@@ -511,15 +511,17 @@ static void save_text_item_click(GtkWidget *widget, gpointer data)
 
 static void quit_item_click(GtkWidget *widget, gpointer data)
 {
- GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(main_window), GTK_DIALOG_DESTROY_WITH_PARENT,
-								 GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, QUIT_MSG_TEXT); 
- gtk_window_set_title(GTK_WINDOW(dialog), QUIT_MSG_CAPTION);
- if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES) {
-	gtk_widget_destroy(dialog);	
-	gtk_main_quit();
- }
- else
+ gboolean response = FALSE;
+ if (exit_query) {
+	GtkWidget *dialog = gtk_message_dialog_new(main_window, GTK_DIALOG_DESTROY_WITH_PARENT,
+						 GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, QUIT_MSG_TEXT); 
+	gtk_window_set_title(GTK_WINDOW(dialog), QUIT_MSG_CAPTION);
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_NO)
+		response = TRUE;
 	gtk_widget_destroy(dialog);
+ } 
+ if (!response)
+	gtk_main_quit();
 }
 
 static void dict_item_click(GtkWidget *widget, gpointer data)
