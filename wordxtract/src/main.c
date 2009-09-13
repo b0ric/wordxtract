@@ -28,6 +28,7 @@
 #include "mainwin.h"
 #include "dict.h"
 
+int exit_query = 1;
 Language lang;
 SaveOpt save_user_words = {2, 40};
 char optpath[PATH_LENGTH] = {0};
@@ -123,7 +124,9 @@ void read_config()
 	char option[OPTION_LENGTH] = {0};
 	char svalue[OPTION_LENGTH] = {0};
 	while (fscanf(conf, "%s\t\t%s\n", option, svalue) != EOF) {
-		if (!strcmp(option, "columns")) {
+		if (!(strcmp(option, "exit_query"))) {
+			exit_query = atoi(svalue);
+		} else if (!strcmp(option, "columns")) {
 			save_user_words.columns = atoi(svalue);
 		} else if (!strcmp(option, "field")) {
 			save_user_words.col_width = atoi(svalue);
@@ -166,6 +169,7 @@ void write_config()
  if (!(conf = fopen(conffile, "w")))
 	perror(conffile);
  else {
+	fprintf(conf, "%s\t\t%d\n", "exit_query", exit_query);
 	fprintf(conf, "%s\t\t%d\n", "columns", save_user_words.columns);
 	fprintf(conf, "%s\t\t%d\n", "field", save_user_words.col_width);
 	fprintf(conf, "%s\t\t%d\n", "language", lang);
