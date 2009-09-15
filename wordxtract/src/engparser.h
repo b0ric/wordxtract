@@ -34,6 +34,7 @@ typedef struct {
 	int excl_word_after_symb;
 } Parseoptions;
 
+extern int print_sentences;
 /* Parsing options */
 extern int excl_w_capital;
 extern int lower_first_capital;

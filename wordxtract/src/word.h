@@ -43,9 +43,10 @@ extern SortedWords user_words;
 
 Word *add_word(Word *, char *);
 void del_word(Word **, char *);
+void copy_words(Word *, Word **);
+void save_words(FILE *, SortedWords, SaveOpt);
 unsigned int get_words_count(const Word *);
 void free_words(Word *);
 SortedWords get_sorted(Word *);
-void save_words(FILE *, SortedWords, SaveOpt);
 
 #endif /*WORD_H*/
