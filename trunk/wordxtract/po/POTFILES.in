@@ -4,4 +4,5 @@
 src/confwin.c
 src/dictwin.c
 src/mainwin.c
+src/main.h
 data/wordxtract.desktop.in

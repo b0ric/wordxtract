@@ -37,18 +37,23 @@ static Word *get_the_rightest(Word *);
 static inline char *wordcpy(char *);
 static inline void free_word(Word *);
 
-unsigned int get_words_count(const Word *root)
+Word *add_word(Word *root, char *word)
 {
- unsigned int cnt = 0;
+ int cond;
 
- if (!root)
-	return 0;
- else {
-	cnt += get_words_count(root->lsibl);
-	cnt += get_words_count(root->rsibl);
-	cnt++;
-	return cnt;
+ if (!root) {
+	root = malloc(sizeof(Word));
+	root->word = wordcpy(word);
+	root->lsibl = root->rsibl = NULL;
  }
+ else {
+	cond = strcmp(word, root->word);
+	if (cond > 0)
+		root->rsibl = add_word(root->rsibl, word);
+	else if (cond < 0)
+		root->lsibl = add_word(root->lsibl, word);
+ }
+ return root;
 }
 
 void del_word(Word **root, char *word)
@@ -95,23 +100,50 @@ void del_word(Word **root, char *word)
  }
 }
 
-Word *add_word(Word *root, char *word)
+void copy_words(Word *src, Word **dst)
 {
- int cond;
+ if (src) {
+	*dst = malloc(sizeof(Word));
+	(*dst)->word = wordcpy(src->word);
+	(*dst)->lsibl = (*dst)->rsibl = NULL;
+	if (src->lsibl)
+		copy_words(src->lsibl, &((*dst)->lsibl));
+	if (src->rsibl)
+		copy_words(src->rsibl, &((*dst)->rsibl));
+ }
+}
 
- if (!root) {
-	root = malloc(sizeof(Word));
-	root->word = wordcpy(word);
-	root->lsibl = root->rsibl = NULL;
+void save_words(FILE *tofile, SortedWords words, SaveOpt options)
+{
+ int i, j;
+ char format[10] = {0};
+ 
+ sprintf(format, "%%-%us", options.col_width);
+ i = 0;
+ while (i < words.count) {
+	for (j = 0; (j < options.columns)&&(i < words.count); j++) {
+		if (j == options.columns-1)
+			fprintf(tofile, "%s\n", *words.by_az);
+		else
+			fprintf(tofile, format, *words.by_az);
+		words.by_az++;
+		i++;
+	}
  }
+}
+
+unsigned int get_words_count(const Word *root)
+{
+ unsigned int cnt = 0;
+
+ if (!root)
+	return 0;
  else {
-	cond = strcmp(word, root->word);
-	if (cond > 0)
-		root->rsibl = add_word(root->rsibl, word);
-	else if (cond < 0)
-		root->lsibl = add_word(root->lsibl, word);
+	cnt += get_words_count(root->lsibl);
+	cnt += get_words_count(root->rsibl);
+	cnt++;
+	return cnt;
  }
- return root;
 }
 
 static Word *find_word(Word *root, const char *word)
@@ -174,25 +206,6 @@ static void sort_words(const Word *root)
 	*sorted.by_az = root->word;
 	sorted.by_az++;
 	sort_words(root->rsibl);
- }
-}
-
-void save_words(FILE *tofile, SortedWords words, SaveOpt options)
-{
- int i, j;
- char format[10] = {0};
- 
- sprintf(format, "%%-%us", options.col_width);
- i = 0;
- while (i < words.count) {
-	for (j = 0; (j < options.columns)&&(i < words.count); j++) {
-		if (j == options.columns-1)
-			fprintf(tofile, "%s\n", *words.by_az);
-		else
-			fprintf(tofile, format, *words.by_az);
-		words.by_az++;
-		i++;
-	}
  }
 }
 

@@ -20,11 +20,13 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 #include "main.h"
 #include "word.h"
 #include "engparser.h"
 #include "dict.h"
 
+int print_sentences = 1;
 int lower_first_capital = 1;
 int excl_w_capital = 1;
 Parseoptions hyphen = {'-', 0, 1, 0, 1, 0};
@@ -45,11 +47,12 @@ int parseengphrase(char *phrase)
  if (!g_utf8_validate(phrase, -1, NULL))
 	return PHRASE_NOT_PARSED;
  phrase_len = strlen(phrase) + 1;
- word = malloc(phrase_len);
+ word = malloc(strlen(phrase) + 1);
  for (i = 0; i < phrase_len; i++)
 	word[i] = 0;
  i = 0;
- add_sentence(phrase);
+ if (print_sentences)
+	add_sentence(phrase);
  for (i = 0, k = 0; phrase[k] != '\0'; k++) {
 	if ((isalpha(phrase[k]))||(phrase[k] == '\'')||(phrase[k] == '-')) {
 		word[i++] = phrase[k];

@@ -17,6 +17,7 @@
  * along with WordXtract. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <sys/stat.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <stdlib.h>
@@ -26,10 +27,12 @@
 #include "mainwin.h"
 #include "dictwin.h"
 #include "dict.h"
+#include "engparser.h"
 
 enum {ICON_COL = 0, ICON_STR_COL, WORD_COL, N_COLUMNS};
 enum {WORD_ITEM = 0};
 
+static GtkWidget *dict_win;
 static GtkWidget *dict_words_list;
 static GtkWidget *user_words_list;
 static GtkWidget *words_cnt_label;
@@ -39,7 +42,9 @@ static void gtk_renderer_set_stock_icon(GtkTreeViewColumn *, GtkCellRenderer *, 
 static gboolean dict_words_popup_by_click(GtkWidget *, GdkEventButton *, gpointer);
 static gboolean dict_words_popup_by_keybd(GtkWidget *, gpointer);
 static void dict_words_popup(GtkWidget *widget, GdkEventButton *);
+static void open_word_item_click(GtkWidget *, gpointer);
 static void remove_word_item_click(GtkWidget *, gpointer);
+static void clear_word_item_click(GtkWidget *, gpointer);
 static gboolean dict_words_list_key_press(GtkWidget *, GdkEventKey *, gpointer);
 static gboolean user_words_list_key_press(GtkWidget *, GdkEventKey *, gpointer);
 static void fill_dict_words(GtkListStore *, char **);
@@ -50,11 +55,12 @@ static void ok_btn_click(GtkWidget *, gpointer);
 
 void create_dict_win()
 {
- /*at first we refresh sorted list of words*/
- free(dict_words.by_az);
+ /*at first we refresh sorted list of words */
+ if (dict_words.by_az)
+	free(dict_words.by_az);
  dict_words = get_sorted(dict);
 
- GtkWidget *dict_win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+ dict_win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
  gtk_widget_set_size_request(dict_win, 550, 410);
  gtk_window_set_title(GTK_WINDOW(dict_win), _("WordXtract Dictionary"));
  gtk_window_set_transient_for(GTK_WINDOW(dict_win), GTK_WINDOW(main_window));
@@ -66,6 +72,7 @@ void create_dict_win()
  gtk_container_add(GTK_CONTAINER(dict_win), vbox);
  gtk_widget_show(vbox);
 
+ /*panels*/
  GtkWidget *dict_hbox = gtk_hbox_new(FALSE, 2);
  gtk_box_pack_start(GTK_BOX(vbox), dict_hbox, TRUE, TRUE, 2);
  gtk_widget_show(dict_hbox);
@@ -100,7 +107,6 @@ void create_dict_win()
  g_signal_connect(G_OBJECT(dict_words_list), "button-press-event", G_CALLBACK(dict_words_popup_by_click), NULL);
  g_signal_connect(G_OBJECT(dict_words_list), "popup-menu", G_CALLBACK(dict_words_popup_by_keybd), NULL);
  fill_dict_words(store_model, dict_words.by_az);
-
  g_signal_connect(G_OBJECT(dict_words_list), "key-press-event", G_CALLBACK(dict_words_list_key_press), NULL);
  gtk_widget_show(dict_words_list);
 
@@ -159,12 +165,12 @@ void create_dict_win()
  gtk_widget_show(add_entry);
 
  GtkWidget *add_btn = gtk_button_new();
- GtkWidget *image = gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON);
- gtk_container_add(GTK_CONTAINER(add_btn), image);
- gtk_widget_show(image);
- gtk_box_pack_start(GTK_BOX(entry_hbox), add_btn, FALSE, FALSE, 0);
  gtk_widget_set_tooltip_text(GTK_WIDGET(add_btn), _("Add word to the dictionary"));
  g_signal_connect(G_OBJECT(add_btn), "clicked", G_CALLBACK(add_btn_click), (gpointer) add_entry);
+ GtkWidget *add_img = gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON);
+ gtk_container_add(GTK_CONTAINER(add_btn), add_img);
+ gtk_widget_show(add_img);
+ gtk_box_pack_start(GTK_BOX(entry_hbox), add_btn, FALSE, FALSE, 0);
  gtk_widget_show(add_btn);
 
  GtkWidget *hbox = gtk_hbox_new(FALSE, 2);
@@ -200,11 +206,12 @@ static void fill_dict_words(GtkListStore *store, char **word_list)
  GtkTreeIter iter;
  int i;
 
- for (i = 0; i < dict_words.count; i++) {
-	gtk_list_store_append(store, &iter);
-	gtk_list_store_set(store, &iter, WORD_ITEM, *word_list, -1);
-	word_list++;
- }
+ if (word_list)
+	for (i = 0; i < dict_words.count; i++) {
+		gtk_list_store_append(store, &iter);
+		gtk_list_store_set(store, &iter, WORD_ITEM, *word_list, -1);
+		word_list++;
+	}
 }
 
 static void set_words_count()
@@ -235,31 +242,127 @@ static gboolean dict_words_popup_by_click(GtkWidget *word_list, GdkEventButton *
 										  (gint) event->y, &path, NULL, NULL, NULL)) {
 			gtk_tree_selection_unselect_all(selection);
 			gtk_tree_selection_select_path(selection, path);
-			dict_words_popup(GTK_WIDGET(word_list), event);
-			return TRUE;
 		}
 	}
+	dict_words_popup(GTK_WIDGET(word_list), event);
+	return TRUE;
  }
  return FALSE;
 }
 
 static gboolean dict_words_popup_by_keybd(GtkWidget *word_list, gpointer data)
 {
- dict_words_popup(word_list, NULL);
+ dict_words_popup(GTK_WIDGET(word_list), FALSE);
  return TRUE;
 }
 
-static void dict_words_popup(GtkWidget *widget, GdkEventButton *event)
+static void dict_words_popup(GtkWidget *word_list, GdkEventButton *event)
 {
  GtkWidget *popup_menu = gtk_menu_new();
+
+ GtkWidget *open_word_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_OPEN, NULL);
+ gtk_widget_set_tooltip_text(GTK_WIDGET(open_word_item), _("Add from file"));
+ g_signal_connect(G_OBJECT(open_word_item), "activate", G_CALLBACK(open_word_item_click), NULL);
+ gtk_menu_shell_append(GTK_MENU_SHELL(popup_menu), open_word_item);
+ gtk_widget_show(open_word_item);
+
  GtkWidget *remove_word_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_REMOVE, NULL);
  gtk_widget_set_tooltip_text(GTK_WIDGET(remove_word_item), _("Remove this word from the dictionary"));
  g_signal_connect(G_OBJECT(remove_word_item), "activate", G_CALLBACK(remove_word_item_click), NULL);
+ GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(word_list));
+ gboolean state = gtk_tree_selection_get_selected(GTK_TREE_SELECTION(selection), NULL, NULL);
+ gtk_widget_set_sensitive(GTK_WIDGET(remove_word_item), state);
  gtk_menu_shell_append(GTK_MENU_SHELL(popup_menu), remove_word_item);
  gtk_widget_show(remove_word_item);
+
+ GtkWidget *clear_word_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_CLEAR, NULL);
+ gtk_widget_set_tooltip_text(GTK_WIDGET(clear_word_item), _("Clear the dictionary"));
+ g_signal_connect(G_OBJECT(clear_word_item), "activate", G_CALLBACK(clear_word_item_click), NULL);
+ gtk_widget_set_sensitive(GTK_WIDGET(clear_word_item), dict ? TRUE : FALSE);
+ gtk_menu_shell_append(GTK_MENU_SHELL(popup_menu), clear_word_item);
+ gtk_widget_show(clear_word_item);
+
  gtk_widget_show(popup_menu);
  gtk_menu_popup(GTK_MENU(popup_menu), NULL, NULL, NULL, NULL,
 				(event != NULL) ? event->button : 0, gdk_event_get_time((GdkEvent*)event));
+}
+
+static void open_word_item_click(GtkWidget *widget, gpointer data)
+{
+ extern void file_error(char *, GtkWidget *, GtkMessageType, char *, char *);
+
+ GtkListStore *user_store_model;
+ GtkTreeIter iter;
+ FILE *fwords, *fdict;
+ Word *tmp_words = NULL;
+ char *filename;
+
+ /* show filechooser dialog*/
+ GtkFileFilter *srt_filter = gtk_file_filter_new();
+ gtk_file_filter_add_mime_type(srt_filter, "application/x-subrip");
+ gtk_file_filter_set_name(srt_filter, _("SubRip subtitles (*srt)"));
+ GtkFileFilter *text_filter = gtk_file_filter_new();
+ gtk_file_filter_add_mime_type(text_filter, "text/plain");
+ gtk_file_filter_set_name(text_filter, _("Plain text"));
+ GtkWidget *filedialog = gtk_file_chooser_dialog_new(_("Open File to add words from it"), 
+						GTK_WINDOW(main_window), GTK_FILE_CHOOSER_ACTION_OPEN,
+						GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN,
+						GTK_RESPONSE_ACCEPT, NULL);
+ gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(filedialog), text_filter);
+ gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(filedialog), srt_filter);
+ gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(filedialog), srt_filter);
+ if (gtk_dialog_run(GTK_DIALOG(filedialog)) == GTK_RESPONSE_ACCEPT) {
+	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filedialog));
+	if (!(fwords = fopen(filename, "r"))) {
+		gtk_widget_destroy(filedialog);
+		file_error(filename, dict_win, GTK_MESSAGE_ERROR, ERR_MSG_CAPTION, ERR_READING_FILE);
+		return ;
+	}
+	/* making temporary copy of current words if it is and ... */
+	if (words) {				
+		copy_words(words, &tmp_words);
+		/* ... and freeing user_words data */
+		free_words(words);
+		words = NULL;
+		free(user_words.by_az);
+		user_words.by_az = NULL;
+	}
+	print_sentences = 0;
+	/* filling user_words data from file */
+	const gchar *filter_name;
+	GtkFileFilter *selected_filter = gtk_file_filter_new();
+	selected_filter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(filedialog));
+	filter_name = gtk_file_filter_get_name(GTK_FILE_FILTER(selected_filter));
+	if (!strcmp(filter_name, _("Plain text"))) {
+		if (process_plain_text(fwords))
+			file_error("", main_window, GTK_MESSAGE_WARNING, WARN_MSG_CAPTION, WARN_NON_UTF8_CHARS);
+		} else if (!strcmp(filter_name, _("SubRip subtitles (*srt)")))
+			process_srt(fwords);
+	fclose(fwords);
+	user_words = get_sorted(words);
+	print_sentences = 1;
+	/* coping user_words data to the dict */
+	int i = 0;
+	user_store_model = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(user_words_list)));
+	for ( ; i < user_words.count; i++, user_words.by_az++) {
+		gtk_list_store_append(user_store_model, &iter);
+		gtk_list_store_set(user_store_model, &iter, ICON_STR_COL, "gtk-add", WORD_COL, *user_words.by_az, -1);
+	}
+	user_words.by_az = user_words.by_az - user_words.count;
+	/* freeing user_words which have been filled with dictionary words */
+	if (words) {
+		free_words(words);
+		words = NULL;
+		free(user_words.by_az);
+		user_words.by_az = NULL;
+	}
+	/* repairing original user_words data if it was */
+	if (tmp_words) {
+		copy_words(tmp_words, &words);
+		user_words = get_sorted(words);
+	}
+ }
+ gtk_widget_destroy(filedialog);
 }
 
 static void remove_word_item_click(GtkWidget *widget, gpointer data)
@@ -289,6 +392,24 @@ static void remove_word_item_click(GtkWidget *widget, gpointer data)
 		gtk_list_store_append(user_store_model, &iter);
 		gtk_list_store_set(user_store_model, &iter, ICON_STR_COL, "gtk-remove", WORD_COL, word, -1);
 	}
+ }
+}
+
+static void clear_word_item_click(GtkWidget *widget, gpointer data)
+{
+ GtkListStore *dict_store_model, *user_store_model;
+ GtkTreeIter dict_iter, user_iter;
+ gboolean valid;
+ gchar *word;
+
+ dict_store_model = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(dict_words_list)));
+ user_store_model = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(user_words_list)));
+ valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(dict_store_model), &dict_iter);
+ while (valid) {
+	gtk_tree_model_get(GTK_TREE_MODEL(dict_store_model), &dict_iter, WORD_ITEM, &word, -1);
+	gtk_list_store_append(user_store_model, &user_iter);
+	gtk_list_store_set(user_store_model, &user_iter, ICON_STR_COL, "gtk-remove", WORD_COL, word, -1);
+	valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(dict_store_model), &dict_iter);
  }
 }
 
@@ -331,7 +452,7 @@ static void add_btn_click(GtkWidget *widget, gpointer add_entry)
  user_store_model = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(user_words_list)));
 
  if (add) {
-	/*check whether word is already in 'words to add' list*/
+	/* check whether word is already in 'words to add' list */
 	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(user_store_model), &iter);
 	gchar *cur_word;
 	while (valid) {
@@ -347,6 +468,8 @@ static void add_btn_click(GtkWidget *widget, gpointer add_entry)
  if (add) {
 		gtk_list_store_append(user_store_model, &iter);
 		gtk_list_store_set(user_store_model, &iter, ICON_STR_COL, "gtk-add", WORD_COL, word, -1);
+		GtkTreePath *word_path = gtk_tree_model_get_path(GTK_TREE_MODEL(user_store_model), &iter);
+		gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(user_words_list), word_path, NULL, TRUE, 1.0, 0.0);
 		gtk_entry_set_text(GTK_ENTRY(entry), "");
  } else {
 	if (strcmp(word, "")) {
@@ -402,7 +525,8 @@ static void ok_btn_click(GtkWidget *widget, gpointer dict_win)
 	save_dict(fdict, dict);
 	fclose(fdict);
  }
- free(dict_words.by_az);
+ if (dict_words.by_az)
+	free(dict_words.by_az);
  dict_words = get_sorted(dict);
  gtk_widget_destroy(GTK_WIDGET(dict_win));
 }

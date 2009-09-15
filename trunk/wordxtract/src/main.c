@@ -35,6 +35,7 @@ char optpath[PATH_LENGTH] = {0};
 char dictfile[PATH_LENGTH] = {0};
 char conffile[PATH_LENGTH] = {0};
 
+void file_error(char *, GtkWidget *, GtkMessageType, char *, char *);
 static void fill_vars();
 
 int main(int argc, char *argv[])
@@ -188,4 +189,19 @@ void write_config()
 	fclose(conf);
  }
 }
+
+void file_error(char *filename, GtkWidget *parent, GtkMessageType msg_type, char *msg_caption, char *msg_text)
+{
+ char *errstr = malloc(strlen(filename) + strlen(msg_text)+1);
+ strcpy(errstr, msg_text);
+ strcat(errstr, filename);
+ GtkWidget *msg = gtk_message_dialog_new(GTK_WINDOW(parent), 
+										GTK_DIALOG_DESTROY_WITH_PARENT, msg_type,
+										GTK_BUTTONS_OK, errstr);
+ gtk_window_set_title(GTK_WINDOW(msg), msg_caption);
+ gtk_dialog_run(GTK_DIALOG(msg));
+ gtk_widget_destroy(msg);
+ free(errstr);
+}
+
 

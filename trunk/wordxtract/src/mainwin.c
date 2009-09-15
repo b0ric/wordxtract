@@ -34,13 +34,6 @@
 
 #define SEARCH_FORWARD 0
 #define SEARCH_BACKWARD 1
-#define ERR_MSG_CAPTION _("Error")
-#define ERR_READING_FILE _("Could not open the file ")
-#define ERR_SAVING_FILE _("Could not save the file ")
-#define WARN_MSG_CAPTION _("Warning")
-#define WARN_NON_UTF8_CHARS _("File you've chosen contain non UTF-8 characters. Result can be unpredictable!")
-#define QUIT_MSG_CAPTION _("Confirmation")
-#define QUIT_MSG_TEXT _("Are you sure to exit?")
 
 enum {WORD_ITEM = 0, N_COLUMNS};
 
@@ -346,8 +339,8 @@ static gint main_window_close(GtkWidget *widget, GdkEvent *event, gpointer main_
  gboolean response = FALSE;
  if (exit_query) {
 	GtkWidget *dialog = gtk_message_dialog_new(main_window, GTK_DIALOG_DESTROY_WITH_PARENT,
-								 GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, QUIT_MSG_TEXT); 
-	gtk_window_set_title(GTK_WINDOW(dialog), QUIT_MSG_CAPTION);
+								 GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, CONFIRM_QUIT_MSG); 
+	gtk_window_set_title(GTK_WINDOW(dialog), CONFIRM_MSG_CAPTION);
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_NO)
 		response = TRUE;
 	gtk_widget_destroy(dialog);
@@ -362,8 +355,8 @@ static void main_window_destroy(GtkWidget *widget, gpointer data)
 
 static void open_item_click(GtkWidget *widget, gpointer data)
 {
+ extern void file_error(char *, GtkWidget *, GtkMessageType, char *, char *);
  char *filename;
- char *errstr, *warnstr;
  FILE *subtitle;
 
  GtkFileFilter *srt_filter = gtk_file_filter_new();
@@ -383,16 +376,7 @@ static void open_item_click(GtkWidget *widget, gpointer data)
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filedialog));
 	if (!(subtitle = fopen(filename, "r"))) {
 		gtk_widget_destroy(filedialog);
-		errstr = malloc(strlen(filename) + strlen(ERR_READING_FILE)+1);
-		strcpy(errstr, ERR_READING_FILE);
-		strcat(errstr, filename);
-		GtkWidget *errmsg = gtk_message_dialog_new(GTK_WINDOW(main_window),
-										GTK_DIALOG_DESTROY_WITH_PARENT,
-										GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, errstr);
-		gtk_window_set_title(GTK_WINDOW(errmsg), ERR_MSG_CAPTION);
-		gtk_dialog_run(GTK_DIALOG(errmsg));
-		gtk_widget_destroy(errmsg);
-		free(errstr);
+		file_error(filename, main_window, GTK_MESSAGE_ERROR, ERR_MSG_CAPTION, ERR_READING_FILE);
 		return ;
 	 }
 	if (words != NULL) {
@@ -413,17 +397,8 @@ static void open_item_click(GtkWidget *widget, gpointer data)
 	filter_name = gtk_file_filter_get_name(GTK_FILE_FILTER(selected_filter));
 	clear_sentences();
 	if (!strcmp(filter_name, _("Plain text"))) {
-		if (process_plain_text(subtitle)) {
-			warnstr = malloc(strlen(WARN_NON_UTF8_CHARS)+1);
-			strcpy(warnstr, WARN_NON_UTF8_CHARS);
-			GtkWidget *warnmsg = gtk_message_dialog_new(GTK_WINDOW(main_window),
-											GTK_DIALOG_DESTROY_WITH_PARENT,
-											GTK_MESSAGE_WARNING, GTK_BUTTONS_CLOSE, warnstr);
-			gtk_window_set_title(GTK_WINDOW(warnmsg), WARN_MSG_CAPTION);
-			gtk_dialog_run(GTK_DIALOG(warnmsg));
-			gtk_widget_destroy(warnmsg);
-			free(warnstr);
-		}
+		if (process_plain_text(subtitle))
+			file_error("", main_window, GTK_MESSAGE_WARNING, WARN_MSG_CAPTION, WARN_NON_UTF8_CHARS);
 	} else if (!strcmp(filter_name, _("SubRip subtitles (*srt)"))) {
 		process_srt(subtitle);
 	}
@@ -442,6 +417,7 @@ static void open_item_click(GtkWidget *widget, gpointer data)
 
 static void save_words_item_click(GtkWidget *widget, gpointer data)
 {
+ extern void file_error(char *, GtkWidget *, GtkMessageType, char *, char *);
  FILE *savefile;
  gchar *filename;
  gchar *errstr;
@@ -454,16 +430,7 @@ static void save_words_item_click(GtkWidget *widget, gpointer data)
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filedialog));
 	if (!(savefile = fopen(filename, "w"))) {
 		gtk_widget_destroy(filedialog);
-		errstr = malloc(strlen(filename) + strlen(ERR_SAVING_FILE)+1);
-		strcpy(errstr, ERR_SAVING_FILE);
-		strcat(errstr, filename);
-		GtkWidget *errmsg = gtk_message_dialog_new(GTK_WINDOW(main_window), 
-										GTK_DIALOG_DESTROY_WITH_PARENT,
-										GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, errstr);
-		gtk_window_set_title(GTK_WINDOW(errmsg), ERR_MSG_CAPTION);
-		gtk_dialog_run(GTK_DIALOG(errmsg));
-		gtk_widget_destroy(errmsg);
-		free(errstr);
+		file_error(filename, main_window, GTK_MESSAGE_ERROR, ERR_MSG_CAPTION, ERR_SAVING_WORDS);
 		return ;
 	}
 	save_words(savefile, user_words, save_user_words);
@@ -474,6 +441,7 @@ static void save_words_item_click(GtkWidget *widget, gpointer data)
 
 static void save_text_item_click(GtkWidget *widget, gpointer data)
 {
+ extern void file_error(char *, GtkWidget *, GtkMessageType, char *, char *);
  FILE *savefile;
  gchar *filename;
  gchar *errstr;
@@ -487,15 +455,7 @@ static void save_text_item_click(GtkWidget *widget, gpointer data)
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filedialog));
 	if (!(savefile = fopen(filename, "w"))) {
 		gtk_widget_destroy(filedialog);
-		errstr = malloc(strlen(filename) + strlen(ERR_SAVING_FILE)+1);
-		strcpy(errstr, ERR_SAVING_FILE);
-		strcat(errstr, filename);
-		GtkWidget *errmsg = gtk_message_dialog_new(GTK_WINDOW(main_window), 
-										GTK_DIALOG_DESTROY_WITH_PARENT,
-										GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, errstr);
-		gtk_window_set_title(GTK_WINDOW(errmsg), ERR_MSG_CAPTION);
-		gtk_dialog_run(GTK_DIALOG(errmsg));
-		gtk_widget_destroy(errmsg);
+		file_error(filename, main_window, GTK_MESSAGE_ERROR, ERR_MSG_CAPTION, ERR_SAVING_TEXT);
 		return ;
 	}
 	GtkTextIter start, end;
@@ -513,9 +473,9 @@ static void quit_item_click(GtkWidget *widget, gpointer data)
 {
  gboolean response = FALSE;
  if (exit_query) {
-	GtkWidget *dialog = gtk_message_dialog_new(main_window, GTK_DIALOG_DESTROY_WITH_PARENT,
-						 GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, QUIT_MSG_TEXT); 
-	gtk_window_set_title(GTK_WINDOW(dialog), QUIT_MSG_CAPTION);
+	GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(main_window), GTK_DIALOG_DESTROY_WITH_PARENT,
+						 GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, CONFIRM_QUIT_MSG); 
+	gtk_window_set_title(GTK_WINDOW(dialog), CONFIRM_MSG_CAPTION);
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_NO)
 		response = TRUE;
 	gtk_widget_destroy(dialog);
