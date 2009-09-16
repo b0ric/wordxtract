@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordxtract 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-15 20:57+0300\n"
+"POT-Creation-Date: 2009-09-16 17:28+0300\n"
 "PO-Revision-Date: 2009-08-24 14:58+0300\n"
 "Last-Translator: Borisov Alexandr <b0ric.alex@gmail.com>\n"
 "Language-Team: Russian\n"
@@ -133,66 +133,70 @@ msgstr "Исключать только слово после де<s>-фиса</
 msgid "Exclude words with hyphen- in the end"
 msgstr "Исключать слова с дефисом- в конце"
 
-#: ../src/dictwin.c:65
+#: ../src/dictwin.c:64
 msgid "WordXtract Dictionary"
 msgstr "Словарь WordXtract"
 
-#: ../src/dictwin.c:85
+#: ../src/dictwin.c:84
 msgid "Words in the dictionary: "
 msgstr "Слова в словаре: "
 
-#: ../src/dictwin.c:118
+#: ../src/dictwin.c:117
 msgid "Changes to the dictionary: "
 msgstr "Изменения словаря: "
 
-#: ../src/dictwin.c:157
+#: ../src/dictwin.c:156
 msgid "Add word: "
 msgstr "Добавить слово: "
 
-#: ../src/dictwin.c:168 ../src/mainwin.c:603
+#: ../src/dictwin.c:167 ../src/mainwin.c:603
 msgid "Add word to the dictionary"
 msgstr "Добавить слово в словарь"
 
-#: ../src/dictwin.c:191
+#: ../src/dictwin.c:190
 msgid "Discard changes and close the window"
 msgstr "Оменить изменения и закрыть окно"
 
-#: ../src/dictwin.c:197
+#: ../src/dictwin.c:196
 msgid "Apply changes and close the window"
 msgstr "Применить изменения и закрыть окно"
 
-#: ../src/dictwin.c:220
+#: ../src/dictwin.c:219
 #, c-format
 msgid "<b> Words in the dictionary: %d</b>"
 msgstr "<b> Слов в словаре: %d</b>"
 
-#: ../src/dictwin.c:264
+#: ../src/dictwin.c:263
 msgid "Add from file"
 msgstr "Добавить из файла"
 
-#: ../src/dictwin.c:270
+#: ../src/dictwin.c:269
 msgid "Remove this word from the dictionary"
 msgstr "Удалить это слово из словаря"
 
-#: ../src/dictwin.c:279
+#: ../src/dictwin.c:278
 msgid "Clear the dictionary"
 msgstr "Очистить словарь"
 
-#: ../src/dictwin.c:303 ../src/dictwin.c:339 ../src/mainwin.c:364
+#: ../src/dictwin.c:302 ../src/dictwin.c:338 ../src/mainwin.c:364
 #: ../src/mainwin.c:402
 msgid "SubRip subtitles (*srt)"
 msgstr "Субтитры SubRip (*srt)"
 
-#: ../src/dictwin.c:306 ../src/dictwin.c:336 ../src/mainwin.c:367
+#: ../src/dictwin.c:305 ../src/dictwin.c:335 ../src/mainwin.c:367
 #: ../src/mainwin.c:399
 msgid "Plain text"
 msgstr "Текстовый файл"
 
-#: ../src/dictwin.c:307
+#: ../src/dictwin.c:306
 msgid "Open File to add words from it"
 msgstr "Откройте файл чтобы добавить слова из него..."
 
-#: ../src/dictwin.c:476
+#: ../src/dictwin.c:465
+msgid "<b>This word has been already marked to add!</b>"
+msgstr "<b>Это слово уже есть в списке!</b>"
+
+#: ../src/dictwin.c:485
 msgid "<b>This word is in the dictionary!</b>"
 msgstr "<b>Это слово уже есть в словаре!</b>"
 

@@ -17,7 +17,6 @@
  * along with WordXtract. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <sys/stat.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <stdlib.h>
@@ -252,7 +251,7 @@ static gboolean dict_words_popup_by_click(GtkWidget *word_list, GdkEventButton *
 
 static gboolean dict_words_popup_by_keybd(GtkWidget *word_list, gpointer data)
 {
- dict_words_popup(GTK_WIDGET(word_list), FALSE);
+ dict_words_popup(GTK_WIDGET(word_list), NULL);
  return TRUE;
 }
 
@@ -441,30 +440,40 @@ static void add_btn_click(GtkWidget *widget, gpointer add_entry)
  GtkTreeIter iter;
  gpointer entry;
  gboolean valid, add = FALSE;
- gchar *word;
+ gchar *word, *cur_word, *stock_id;
 
  if (add_entry)
 	entry = add_entry;
  else
 	entry = widget;
  word = (gchar *) gtk_entry_get_text(GTK_ENTRY(entry));
- add = strcmp(word, "")&&!is_in_dict(word, dict);
- user_store_model = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(user_words_list)));
+ add = strcmp(word, "");
 
+ user_store_model = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(user_words_list)));
  if (add) {
-	/* check whether word is already in 'words to add' list */
+	/* check whether word is already in 'changes' list */
 	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(user_store_model), &iter);
-	gchar *cur_word;
 	while (valid) {
-		gtk_tree_model_get(GTK_TREE_MODEL(user_store_model), &iter, WORD_COL, &cur_word, -1);
+		gtk_tree_model_get(GTK_TREE_MODEL(user_store_model), &iter, WORD_COL, &cur_word, ICON_STR_COL, &stock_id, -1);
 		if (!strcmp(word, cur_word)) {
+			/* if this word was marked to remove we just remove this mark and don't add it*/
+			if (!strcmp(stock_id, "gtk-remove")) {
+				gtk_list_store_remove(user_store_model, &iter);
+				gtk_entry_set_text(GTK_ENTRY(entry), "");
+			}
+			else {
+				gtk_label_set_text(GTK_LABEL(words_cnt_label), _("<b>This word has been already marked to add!</b>"));
+				gtk_label_set_use_markup(GTK_LABEL(words_cnt_label), TRUE);
+			}
 			add = FALSE;
 			g_free(cur_word);
-			break;
+			g_free(stock_id);
+			return ;
 		}
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(user_store_model), &iter);
 	}
  }
+ add = add&&!is_in_dict(word, dict);
  if (add) {
 		gtk_list_store_append(user_store_model, &iter);
 		gtk_list_store_set(user_store_model, &iter, ICON_STR_COL, "gtk-add", WORD_COL, word, -1);
