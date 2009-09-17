@@ -357,7 +357,7 @@ static void open_item_click(GtkWidget *widget, gpointer data)
 {
  extern void file_error(char *, GtkWidget *, GtkMessageType, char *, char *);
  char *filename;
- FILE *subtitle;
+ FILE *ffile;
 
  GtkFileFilter *srt_filter = gtk_file_filter_new();
  gtk_file_filter_add_mime_type(srt_filter, "application/x-subrip");
@@ -374,7 +374,7 @@ static void open_item_click(GtkWidget *widget, gpointer data)
  gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(filedialog), srt_filter);
  if (gtk_dialog_run(GTK_DIALOG(filedialog)) == GTK_RESPONSE_ACCEPT) {
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filedialog));
-	if (!(subtitle = fopen(filename, "r"))) {
+	if (!(ffile = fopen(filename, "r"))) {
 		gtk_widget_destroy(filedialog);
 		file_error(filename, main_window, GTK_MESSAGE_ERROR, ERR_MSG_CAPTION, ERR_READING_FILE);
 		return ;
@@ -397,14 +397,15 @@ static void open_item_click(GtkWidget *widget, gpointer data)
 	filter_name = gtk_file_filter_get_name(GTK_FILE_FILTER(selected_filter));
 	clear_sentences();
 	if (!strcmp(filter_name, _("Plain text"))) {
-		if (process_plain_text(subtitle))
+		if (process_plain_text(ffile))
 			file_error("", main_window, GTK_MESSAGE_WARNING, WARN_MSG_CAPTION, WARN_NON_UTF8_CHARS);
 	} else if (!strcmp(filter_name, _("SubRip subtitles (*srt)"))) {
-		process_srt(subtitle);
+		if (process_srt(ffile))
+			file_error("", main_window, GTK_MESSAGE_WARNING, WARN_MSG_CAPTION, WARN_NON_UTF8_CHARS);
 	}
 	user_words = get_sorted(words);
 	fill_list(user_words.by_az);
-	fclose(subtitle);
+	fclose(ffile);
 	gchar *file = malloc(strlen(filename)+1);
 	file = basename(filename);
 	gchar *status_msg = malloc(strlen(file) + strlen(_("%d words were picked up from '%s'"))+1);
