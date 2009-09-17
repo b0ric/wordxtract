@@ -32,22 +32,23 @@ static int get_srt_tag_length(char *);
 int process_srt(FILE *subtitle)
 {
  char line[MAXLINE] = {0};
- int lines;
+ int lines, parse_res = 0;
 
  while (!feof(subtitle)) {
-	 for (lines = 0; lines < 2; lines++) {	 
-		 fgets(line, MAXLINE, subtitle); 
-		 if (feof(subtitle)) return 0;
-	 }
-	 fgets(line, MAXLINE, subtitle);
-	 process_srt_line(line);
-	 fgets(line, MAXLINE, subtitle);
-	 if (!((line[0] == '\n')||((line[0] == '\r')&&(line[1] == '\n')))) {
-		 process_srt_line(line);	  
-	 	 fgets(line, MAXLINE, subtitle);
-	 }
+	for (lines = 0; lines < 2; lines++) {	 
+		fgets(line, MAXLINE, subtitle); 
+		if (feof(subtitle))
+			return parse_res;
+	}
+	fgets(line, MAXLINE, subtitle);
+	parse_res = process_srt_line(line)||parse_res;
+	fgets(line, MAXLINE, subtitle);
+	if (!((line[0] == '\n')||((line[0] == '\r')&&(line[1] == '\n')))) {
+		parse_res = process_srt_line(line)||parse_res;
+		fgets(line, MAXLINE, subtitle);
+	}
  }
- return 0;
+ return parse_res;
 }
 
 /*
@@ -60,18 +61,21 @@ int process_srt_line(char *line)
  int taglength;
 
  for (i = 0; !((line[0] == '\n')||((line[0] == '\r')&&(line[1] == '\n'))); i++, line++) {
-	 while (*line == '<') {
-		 if (!(taglength = get_srt_tag_length(line)))
+	while (*line == '<') {
+		if (!(taglength = get_srt_tag_length(line)))
 			break;
-		 line += taglength;
-	 }
-	 if ((line[0] == '\n')||((line[0] == '\r')&&(line[1] == '\n')))
-			break;
-	 phrase[i] = *line;
+		line += taglength;
+	}
+	if ((line[0] == '\n')||((line[0] == '\r')&&(line[1] == '\n')))
+		break;
+	phrase[i] = *line;
  }
  phrase[i] = '\n';
  switch (lang) {
-	 case ENG: parseengphrase(phrase);
+	case ENG:
+		return parseengphrase(phrase);
+	default:
+		return 1;
  }
  return 0;
 }
