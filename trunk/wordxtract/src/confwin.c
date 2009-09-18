@@ -18,6 +18,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 #include "main.h"
 #include "engparser.h"
 #include "mainwin.h"
@@ -58,6 +59,8 @@ static void after_hyphen_btn_click(GtkWidget *, gpointer);
 
 void create_conf_win()
 {
+ GtkAccelGroup *accel_group = gtk_accel_group_new();
+
  conf_win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
  gtk_widget_set_size_request(conf_win, 455, 350);
  gtk_window_set_title(GTK_WINDOW(conf_win), _("WordXtract Preferences"));
@@ -277,9 +280,11 @@ void create_conf_win()
 
  GtkWidget *cancel_btn = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
  gtk_box_pack_end(GTK_BOX(btn_hbox), cancel_btn, TRUE, TRUE, 0);
+ gtk_widget_add_accelerator(cancel_btn, "activate", accel_group, GDK_Escape, 0, 0);
  g_signal_connect(G_OBJECT(cancel_btn), "clicked", G_CALLBACK(cancel_btn_click), NULL);
  gtk_widget_show(cancel_btn);
 
+ gtk_window_add_accel_group(GTK_WINDOW(conf_win), accel_group);
  gtk_widget_show(conf_win);
 }
 

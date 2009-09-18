@@ -32,6 +32,7 @@ enum {ICON_COL = 0, ICON_STR_COL, WORD_COL, N_COLUMNS};
 enum {WORD_ITEM = 0};
 
 static GtkWidget *dict_win;
+static GtkAccelGroup *accel_group;
 static GtkWidget *dict_words_list;
 static GtkWidget *user_words_list;
 static GtkWidget *words_cnt_label;
@@ -58,6 +59,8 @@ void create_dict_win()
  if (dict_words.by_az)
 	free(dict_words.by_az);
  dict_words = get_sorted(dict);
+
+ accel_group = gtk_accel_group_new();
 
  dict_win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
  gtk_widget_set_size_request(dict_win, 550, 410);
@@ -188,6 +191,7 @@ void create_dict_win()
  GtkWidget *cancel_btn = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
  gtk_box_pack_end(GTK_BOX(btn_hbox), cancel_btn, TRUE, TRUE, 0);
  gtk_widget_set_tooltip_text(GTK_WIDGET(cancel_btn), _("Discard changes and close the window"));
+ gtk_widget_add_accelerator(cancel_btn, "activate", accel_group, GDK_Escape, 0, 0);
  g_signal_connect(G_OBJECT(cancel_btn), "clicked", G_CALLBACK(cancel_btn_click), (gpointer) dict_win);
  gtk_widget_show(cancel_btn);
 
@@ -196,7 +200,9 @@ void create_dict_win()
  gtk_widget_set_tooltip_text(GTK_WIDGET(ok_btn), _("Apply changes and close the window"));
  g_signal_connect(G_OBJECT(ok_btn), "clicked", G_CALLBACK(ok_btn_click), (gpointer) dict_win);
  gtk_widget_show(ok_btn);
-
+ 
+ /*showing window*/
+ gtk_window_add_accel_group(GTK_WINDOW(dict_win), accel_group);
  gtk_widget_show(dict_win);
 }
 
@@ -257,16 +263,21 @@ static gboolean dict_words_popup_by_keybd(GtkWidget *word_list, gpointer data)
 
 static void dict_words_popup(GtkWidget *word_list, GdkEventButton *event)
 {
+
  GtkWidget *popup_menu = gtk_menu_new();
 
  GtkWidget *open_word_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_OPEN, NULL);
  gtk_widget_set_tooltip_text(GTK_WIDGET(open_word_item), _("Add from file"));
+ gtk_widget_add_accelerator(open_word_item, "activate", accel_group, GDK_O, 
+							GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
  g_signal_connect(G_OBJECT(open_word_item), "activate", G_CALLBACK(open_word_item_click), NULL);
  gtk_menu_shell_append(GTK_MENU_SHELL(popup_menu), open_word_item);
  gtk_widget_show(open_word_item);
 
  GtkWidget *remove_word_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_REMOVE, NULL);
  gtk_widget_set_tooltip_text(GTK_WIDGET(remove_word_item), _("Remove this word from the dictionary"));
+ gtk_widget_add_accelerator(remove_word_item, "activate", accel_group, GDK_Delete, 
+							0, GTK_ACCEL_VISIBLE);
  g_signal_connect(G_OBJECT(remove_word_item), "activate", G_CALLBACK(remove_word_item_click), NULL);
  GtkTreeSelection *selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(word_list));
  gboolean state = gtk_tree_selection_get_selected(GTK_TREE_SELECTION(selection), NULL, NULL);
