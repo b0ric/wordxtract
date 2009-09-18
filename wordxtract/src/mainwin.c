@@ -73,8 +73,8 @@ static void about_item_click(GtkWidget *, gpointer);
 static gboolean popup_by_click(GtkWidget *, GdkEventButton *, gpointer);
 static gboolean popup_by_keybd(GtkWidget *, gpointer);
 static void word_list_popup(GtkWidget *, GdkEventButton *);
-static void show_sent_item_click(GtkWidget *, gpointer );
-static void add_to_dict_item_click(GtkWidget *, gpointer );
+static void show_sent_item_click(GtkWidget *, gpointer);
+static void add_to_dict_item_click(GtkWidget *, gpointer);
 static void fill_list(char **);
 static void change_search_navigation_state(gboolean);
 static gboolean find_entry_key_press(GtkWidget *, GdkEventKey *, gpointer);
@@ -92,6 +92,8 @@ static void find_other(const gchar *, const int);
 
 void create_main_window()
 {
+ GtkAccelGroup *accel_group = gtk_accel_group_new();
+
  main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
  gtk_widget_set_size_request(main_window, 640, 480);
  gtk_window_set_title(GTK_WINDOW(main_window), PROGNAME);
@@ -124,12 +126,16 @@ void create_main_window()
  g_signal_connect(G_OBJECT(open_item), "activate", G_CALLBACK(open_item_click), NULL);
  save_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_SAVE_AS, NULL);
  gtk_widget_set_sensitive(GTK_WIDGET(save_item), FALSE);
+ gtk_widget_add_accelerator(open_item, "activate", accel_group, GDK_O, 
+							GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
  GtkWidget *save_menu = gtk_menu_new();
  GtkWidget *save_words_img = gtk_image_new_from_stock(GTK_STOCK_SAVE_AS, GTK_ICON_SIZE_MENU);
  GtkWidget *save_words_item = gtk_image_menu_item_new_with_label(_("Words"));
  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(save_words_item), save_words_img);
  gtk_widget_set_tooltip_text(GTK_WIDGET(save_words_item), _("Save list of words to file"));
  g_signal_connect(G_OBJECT(save_words_item), "activate", G_CALLBACK(save_words_item_click), NULL);
+ gtk_widget_add_accelerator(save_words_item, "activate", accel_group, GDK_S, 
+							GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
  GtkWidget *save_text_img = gtk_image_new_from_stock(GTK_STOCK_SAVE_AS, GTK_ICON_SIZE_MENU);
  GtkWidget *save_text_item = gtk_image_menu_item_new_with_label(_("Text"));
  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(save_text_item), save_text_img);
@@ -141,6 +147,8 @@ void create_main_window()
  GtkWidget *quit_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_QUIT, NULL);
  gtk_widget_set_tooltip_text(GTK_WIDGET(quit_item), _("Close the program"));
  g_signal_connect(G_OBJECT(quit_item), "activate", G_CALLBACK(quit_item_click), NULL);
+ gtk_widget_add_accelerator(quit_item, "activate", accel_group, GDK_Q, 
+							GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
  gtk_menu_item_set_submenu(GTK_MENU_ITEM(file_item), file_menu);
  gtk_menu_shell_append(GTK_MENU_SHELL(file_menu), open_item);
  gtk_menu_shell_append(GTK_MENU_SHELL(file_menu), save_item);
@@ -153,6 +161,8 @@ void create_main_window()
  GtkWidget *edit_item = gtk_menu_item_new_with_mnemonic(_("_Edit"));
  GtkWidget *dict_item = gtk_image_menu_item_new_with_label(_("Dictionary"));
  gtk_widget_set_tooltip_text(GTK_WIDGET(dict_item), _("View and edit dictionary"));
+ gtk_widget_add_accelerator(dict_item, "activate", accel_group, GDK_D, 
+							GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
  GtkWidget *edit_img = gtk_image_new_from_stock(GTK_STOCK_EDIT, GTK_ICON_SIZE_MENU);
  gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(dict_item), edit_img);
  g_signal_connect(G_OBJECT(dict_item), "activate", G_CALLBACK(dict_item_click), NULL);
@@ -313,6 +323,8 @@ void create_main_window()
  find_id = gtk_statusbar_get_context_id(GTK_STATUSBAR(statusbar), "find_context");
  gtk_statusbar_push(GTK_STATUSBAR(statusbar), id, _("Open file to pick up words from it..."));
  gtk_widget_show(statusbar);
+
+ gtk_window_add_accel_group(GTK_WINDOW(main_window), accel_group);
 
  GtkTextIter iter;
  gchar welcome_msg[] = {N_("\n\t\t\tWelcome to WordXtract\n\n  \tThis is a program which helps to pick up list of\n  "
