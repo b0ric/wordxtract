@@ -29,7 +29,6 @@ SortedWords user_words;
 
 static SortedWords sorted = {0, NULL};
 
-static Word *find_word(Word *, const char *);
 /*third argument of find_parent() should be NULL when func is to be called*/
 static void find_parent(Word *, const Word *, Word **);
 static void sort_words(const Word *);
@@ -146,7 +145,7 @@ unsigned int get_words_count(const Word *root)
  }
 }
 
-static Word *find_word(Word *root, const char *word)
+Word *find_word(Word *root, const char *word)
 {
  int cond;
 

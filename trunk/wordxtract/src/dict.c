@@ -30,6 +30,30 @@ SortedWords dict_words = {0, NULL};
 
 static void create_dict_file(char *path);
 
+void create_dict_file(char *path)
+{
+ mode_t mode_0755 = S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH;
+ struct stat st;
+ FILE *fdict;
+ char file[PATH_LENGTH] = {0};
+
+ if (stat(path, &st)) {
+	fprintf(stderr, "%s: Creating directory\n", path);
+	if (mkdir(path, mode_0755)) {
+		perror(path);
+		exit(1);
+	}
+ }
+ strcat(file, path);
+ strcat(file, DICT_FILE);
+ fprintf(stderr, "%s: Creating blank dictionary file\n", file);
+	if (!(fdict = fopen(file, "w"))) {
+		perror(file);
+		exit(1);
+	}
+	fclose(fdict);
+}
+
 Word *load_dict()
 {
  FILE *fdict;
@@ -66,45 +90,5 @@ void save_dict(FILE *file, Word *root)
 	save_dict(file, root->lsibl);
 	save_dict(file, root->rsibl);	
  }
-}
-
-int is_in_dict(char *word, Word *dic_rec)
-{
- int cond;
-
- if (dic_rec == NULL)
-	return NOT_IN_DICT;
- else {	
-	if ((cond = strcmp(word, dic_rec->word)) == 0)
-		return IN_DICT;
-	else if (cond > 0)
-		return is_in_dict(word, dic_rec->rsibl);
-	else
-		return is_in_dict(word, dic_rec->lsibl);
- }
-}
-
-void create_dict_file(char *path)
-{
- mode_t mode_0755 = S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH;
- struct stat st;
- FILE *fdict;
- char file[PATH_LENGTH] = {0};
-
- if (stat(path, &st)) {
-	fprintf(stderr, "%s: Creating directory\n", path);
-	if (mkdir(path, mode_0755)) {
-		perror(path);
-		exit(1);
-	}
- }
- strcat(file, path);
- strcat(file, DICT_FILE);
- fprintf(stderr, "%s: Creating blank dictionary file\n", file);
-	if (!(fdict = fopen(file, "w"))) {
-		perror(file);
-		exit(1);
-	}
-	fclose(fdict);
 }
 
