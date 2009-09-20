@@ -484,7 +484,7 @@ static void add_btn_click(GtkWidget *widget, gpointer add_entry)
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(user_store_model), &iter);
 	}
  }
- add = add&&!is_in_dict(word, dict);
+ add = add&&!find_word(dict, word);
  if (add) {
 		gtk_list_store_append(user_store_model, &iter);
 		gtk_list_store_set(user_store_model, &iter, ICON_STR_COL, "gtk-add", WORD_COL, word, -1);

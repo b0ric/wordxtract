@@ -29,6 +29,5 @@ extern SortedWords dict_words;
 
 Word *load_dict();
 void save_dict(FILE *, Word *);
-int is_in_dict(char *, Word *);
 
 #endif /*DICT_H*/
