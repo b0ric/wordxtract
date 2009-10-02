@@ -1,0 +1,83 @@
+Introduction
+============
+
+WordXtract is a program to pick up list of unique words
+from any plain text or .srt file. Some words can be excluded
+according to words in your dictionary
+
+Compilation
+===========
+
+1. Compiling for Linux
+
+    To compile this package for Linux you should have
+
+        gtk+-2.0 >= 2.12.0
+	libgtk2.0-dev
+
+    The latest version of GTK+ can be found at http://ftp.gnome.org
+    Executive summary:
+
+	./configure
+        make
+        make install
+
+2. Cross compiling on Linux for Windows systems
+
+    To compile this program for Windows you should have cross 
+    compiler installed on your system. You may be able to install
+    pre-compiled packages (exact names can be different):
+    
+        mingw32
+        mingw32-binutils
+	mingw32-runtime
+
+    or compile cross compiler, tools and install appropriate headers
+    by youself. 
+    Also you should have GTK+ headers, import libs and tools installed
+    in the cross compiler directory. They can be found at gtk website:
+    
+	http://www.gtk.org/download-windows.html
+    
+    Then you will be able to compile the application by running    
+
+	./configure.i586-mingw32msvc
+	make
+
+    NOTE that this script was configured for the i586-mingw32msvc
+    cross compiler which is supposed to be installed in
+    /usr/i586-mingw32msvc directory. If it is not so for you, then
+    you should edit this script for your system or maybe complitely
+    rewrite it.
+    Runtime libraries for the application can also be found at
+
+	http://www.gtk.org/download-windows.html
+    
+    For the program to be run properly you should create 
+    gdk-pixbuf.loaders file in the PROG_DIR/etc/gtk-2.0 directory:
+    
+	mkdir etc
+	mkdir etc/gtk-2.0
+	gdk-pixbuf-query-loaders > etc/gtk-2.0/gdk-pixbuf.loaders
+    
+Running
+=======
+
+You can run application simply by typing 
+
+    $wordxtract
+
+Before you can add words to your dictionary and/or process
+files you want. Also you can save processed text or/and 
+list of words (words saving options can be found in 
+Preferences manu item). After installation You also can
+maintain basic dictionary which is in project root directory
+by commands (assuming you are in project root dir)
+
+    $mkdir ~/.wordxtract	#*
+    $cp dict ~/.wordxtract/
+
+* Note, that .wordxtract directory will be created
+at first run so, you maybe don't need to create it
+
+Enjoy!
