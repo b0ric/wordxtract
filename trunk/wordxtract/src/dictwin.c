@@ -63,7 +63,7 @@ void create_dict_win()
  accel_group = gtk_accel_group_new();
 
  dict_win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
- gtk_widget_set_size_request(dict_win, 550, 410);
+ gtk_widget_set_size_request(dict_win, 500, 400);
  gtk_window_set_title(GTK_WINDOW(dict_win), _("WordXtract Dictionary"));
  gtk_window_set_transient_for(GTK_WINDOW(dict_win), GTK_WINDOW(main_window));
  gtk_window_set_position(GTK_WINDOW(dict_win), GTK_WIN_POS_CENTER_ON_PARENT);

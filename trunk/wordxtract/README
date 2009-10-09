@@ -44,7 +44,7 @@ Compilation
 	./configure.i586-mingw32msvc
 	make
 
-    NOTE that this script was configured for the i586-mingw32msvc
+    NOTE: that this script was configured for the i586-mingw32msvc
     cross compiler which is supposed to be installed in
     /usr/i586-mingw32msvc directory. If it is not so for you, then
     you should edit this script for your system or maybe complitely
@@ -74,7 +74,7 @@ Compilation
 	gdk-pixbuf-query-loaders.exe > etc\gtk-2.0\gdk-pixbuf.loaders
     
     You can also dowload precompiled binaries from the wordxtract website
-    and pick up all required binaries there.
+    and pick up all required binaries and configuration files there.
     
 Running
 =======
