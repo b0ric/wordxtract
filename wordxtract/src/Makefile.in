@@ -34,6 +34,7 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 bin_PROGRAMS = wordxtract$(EXEEXT)
+@WIN32_TRUE@am__append_1 = win32/wordxtract.res
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -158,6 +159,7 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
+WINDRES = @WINDRES@
 XGETTEXT = @XGETTEXT@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
@@ -201,8 +203,8 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 wordxtractlocaledir = @wordxtractlocaledir@
-DIST_SUBDIRS = pixmaps
-SUBDIRS = pixmaps
+DIST_SUBDIRS = pixmaps win32
+SUBDIRS = pixmaps win32
 wordxtract_SOURCES = \
 	main.c main.h				\
 	word.c word.h				\
@@ -214,14 +216,20 @@ wordxtract_SOURCES = \
 	srt.c srt.h				\
 	plaintext.c plaintext.h
 
-AM_CFLAGS = \
-	@GTK_CFLAGS@				\
-	-DWORDXTRACT_DATA_DIR=\""$(datadir)/wordxtract"\"	\
-	-DGNOME_ICONDIR=\""$(datadir)/pixmaps"\"		\
-	-DLOCALE_DIR=\""$(wordxtractlocaledir)"\"
+@WIN32_FALSE@AM_CFLAGS = -DWORDXTRACT_DATA_DIR=\""$(datadir)/wordxtract"\" \
+@WIN32_FALSE@	-DGNOME_ICONDIR=\""$(datadir)/pixmaps"\" \
+@WIN32_FALSE@	-DLOCALE_DIR=\""$(wordxtractlocaledir)"\" \
+@WIN32_FALSE@	@GTK_CFLAGS@ $(am__empty)
+@WIN32_TRUE@AM_CFLAGS = -mwindows -DWIN32 \
+@WIN32_TRUE@	-DWORDXTRACT_DATA_DIR=\""../share/wordxtract"\" \
+@WIN32_TRUE@	@GTK_CFLAGS@ $(am__empty)
+wordxtract_LDADD = @GTK_LIBS@ $(am__append_1)
+@WIN32_FALSE@wordxtract_DEPENDENCIES = @GTK_LIBS@
 
-wordxtract_LDADD = @GTK_LIBS@
-wordxtract_DEPENDENCIES = @GTK_LIBS@
+# Here is the price we pay for cross compilation support
+#       pkg-config may return some non-standart dirs with -L options
+#       which will be threated as additional targets and error will occur
+@WIN32_TRUE@wordxtract_DEPENDENCIES = win32/wordxtract.res
 all: all-recursive
 
 .SUFFIXES:

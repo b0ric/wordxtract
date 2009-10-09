@@ -137,6 +137,7 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
+WINDRES = @WINDRES@
 XGETTEXT = @XGETTEXT@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
@@ -180,10 +181,10 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 wordxtractlocaledir = @wordxtractlocaledir@
-appicondir = $(datadir)/pixmaps
-appicon_DATA = wordxtract.png
+@WIN32_FALSE@appicondir = $(datadir)/pixmaps
+@WIN32_FALSE@appicon_DATA = wordxtract.png
 SOURCES = wordxtract.png
-EXTRA_DIST = $(appicon_DATA)
+EXTRA_DIST = $(SOURCES)
 all: all-am
 
 .SUFFIXES:

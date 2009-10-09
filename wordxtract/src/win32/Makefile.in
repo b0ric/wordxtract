@@ -13,7 +13,6 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
-
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
@@ -30,7 +29,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-subdir = src/pixmaps
+subdir = src/win32
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -41,15 +40,6 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 SOURCES =
 DIST_SOURCES =
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(pixmapsdir)"
-pixmapsDATA_INSTALL = $(INSTALL_DATA)
-DATA = $(pixmaps_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 ALL_LINGUAS = @ALL_LINGUAS@
@@ -182,11 +172,11 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 wordxtractlocaledir = @wordxtractlocaledir@
-EXTRA_DIST = *.png
-pixmapsdir = $(datadir)/wordxtract/pixmaps
-@WIN32_FALSE@pixmaps_DATA = wordxtract1.png wordxtract2.png
-@WIN32_TRUE@pixmaps_DATA = wordxtract1.png
-all: all-am
+@WIN32_TRUE@BUILT_SOURCES = wordxtract.res
+EXTRA_DIST = wordxtract.ico wordxtract.rc
+DISTCLEANFILES = wordxtract.res
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -198,9 +188,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  src/pixmaps/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  src/win32/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  src/pixmaps/Makefile
+	  $(AUTOMAKE) --gnu  src/win32/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -218,23 +208,6 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-install-pixmapsDATA: $(pixmaps_DATA)
-	@$(NORMAL_INSTALL)
-	test -z "$(pixmapsdir)" || $(MKDIR_P) "$(DESTDIR)$(pixmapsdir)"
-	@list='$(pixmaps_DATA)'; for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  f=$(am__strip_dir) \
-	  echo " $(pixmapsDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(pixmapsdir)/$$f'"; \
-	  $(pixmapsDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(pixmapsdir)/$$f"; \
-	done
-
-uninstall-pixmapsDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(pixmaps_DATA)'; for p in $$list; do \
-	  f=$(am__strip_dir) \
-	  echo " rm -f '$(DESTDIR)$(pixmapsdir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(pixmapsdir)/$$f"; \
-	done
 tags: TAGS
 TAGS:
 
@@ -269,13 +242,12 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: check-am
-all-am: Makefile $(DATA)
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
+all-am: Makefile
 installdirs:
-	for dir in "$(DESTDIR)$(pixmapsdir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
-install: install-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -295,10 +267,12 @@ clean-generic:
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
 clean-am: clean-generic mostlyclean-am
@@ -317,7 +291,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-pixmapsDATA
+install-data-am:
 
 install-dvi: install-dvi-am
 
@@ -351,7 +325,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-pixmapsDATA
+uninstall-am:
 
 .MAKE: install-am install-strip
 
@@ -360,12 +334,13 @@ uninstall-am: uninstall-pixmapsDATA
 	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-pixmapsDATA install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am uninstall \
-	uninstall-am uninstall-pixmapsDATA
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am
 
+@WIN32_TRUE@wordxtract.res: wordxtract.rc
+@WIN32_TRUE@	$(WINDRES) -i wordxtract.rc --input-format=rc -o wordxtract.res -O coff
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

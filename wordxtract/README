@@ -8,18 +8,74 @@ according to words in your dictionary
 Compilation
 ===========
 
-To compile this package You should have
+1. Compiling for Linux
 
-    gtk+-2.0 >= 2.12.0
-    libgtk2.0-dev
+    To compile this package for Linux you should have
 
-The latest version of GTK+ can be found at http://ftp.gnome.org
-Executive summary:
+        gtk+-2.0 >= 2.12.0
+	libgtk2.0-dev
 
-    ./configure
-    make
-    make install
+    The latest version of GTK+ can be found at http://ftp.gnome.org
+    Executive summary:
 
+	./configure
+        make
+        make install
+
+2. Cross compiling on Linux for Windows systems
+
+    To compile this program for Windows you should have cross 
+    compiler installed on your system. You may be able to install
+    pre-compiled packages (exact names can be different):
+    
+        mingw32
+        mingw32-binutils
+	mingw32-runtime
+
+    or compile cross compiler, tools and install appropriate headers
+    by youself. 
+    Also you should have GTK+ headers, import libs and tools installed
+    in the cross compiler directory. They can be found at gtk website:
+    
+	http://www.gtk.org/download-windows.html
+    
+    Then you will be able to compile the application by running    
+
+	./configure.i586-mingw32msvc
+	make
+
+    NOTE that this script was configured for the i586-mingw32msvc
+    cross compiler which is supposed to be installed in
+    /usr/i586-mingw32msvc directory. If it is not so for you, then
+    you should edit this script for your system or maybe complitely
+    rewrite it.
+    Runtime libraries for the application can also be found at
+
+	http://www.gtk.org/download-windows.html
+    
+    And one more thing is required for  the program to be run properly:
+    you should create gdk-pixbuf.loaders file in the PROG_DIR/etc/gtk-2.0
+    directory. To accomplish this task you should copy
+    
+	gdk-pixbuf-query-loaders.exe 
+	libpixbufloader-png.dll
+    
+    binaries to the program folder from the gtk distribution for windows.
+    Rough approximation of this explanation is:
+    
+	cp gdk-pixbuf-query-loaders.exe PROG_DIR
+	mkdir lib
+	mkdir lib\gtk-2.0
+	mkdir lib\gtk-2.0\2.10.0
+	mkdir lib\gtk-2.0\2.10.0\loaders
+	cp libpixbufloader-png.dll PROG_DIR\lib\gtk-2.0\2.10.0\loaders
+	mkdir etc
+	mkdir etc\gtk-2.0
+	gdk-pixbuf-query-loaders.exe > etc\gtk-2.0\gdk-pixbuf.loaders
+    
+    You can also dowload precompiled binaries from the wordxtract website
+    and pick up all required binaries there.
+    
 Running
 =======
 

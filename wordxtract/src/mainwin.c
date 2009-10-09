@@ -17,8 +17,12 @@
  * along with WordXtract. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef WIN32
+#include <windows.h>
+#endif
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#include <sys/stat.h>
 #include <stdlib.h>
 #include <libgen.h>
 #include <string.h>
@@ -99,9 +103,11 @@ void create_main_window()
  gtk_window_set_title(GTK_WINDOW(main_window), PROGNAME);
  gtk_window_set_position(GTK_WINDOW(main_window), GTK_WIN_POS_CENTER);
 
+#ifndef WIN32
  char *iconfile = malloc(strlen(WORDXTRACT_DATA_DIR) + strlen("/pixmaps/wordxtract2.png")+1);
  strcpy(iconfile, WORDXTRACT_DATA_DIR);
  strcat(iconfile, "/pixmaps/wordxtract2.png");
+
  GError *error = NULL;
  GdkPixbuf *icon = gdk_pixbuf_new_from_file(iconfile, &error);
  if(!icon) {
@@ -109,6 +115,7 @@ void create_main_window()
 	g_error_free(error);
  }
  gtk_window_set_icon(GTK_WINDOW(main_window), icon);
+#endif
 
  g_signal_connect(G_OBJECT(main_window), "delete_event", G_CALLBACK(main_window_close), (gpointer) main_window);
  g_signal_connect(G_OBJECT(main_window), "destroy", G_CALLBACK(main_window_destroy), NULL);
@@ -368,15 +375,51 @@ static void main_window_destroy(GtkWidget *widget, gpointer data)
 static void open_item_click(GtkWidget *widget, gpointer data)
 {
  extern void file_error(char *, GtkWidget *, GtkMessageType, char *, char *);
+
  char *filename;
  FILE *ffile;
 
+/*
+	WinAPI's dialogs are familiar to windows users but they aren't compatible with
+	gtk_main() loop, so it should be opened into another thread - too much 
+	complexity for such simple application:)
+*/
+/*
+ OPENFILENAME ofn;
+ char filename[MAX_PATH] = "";
+ 
+ memset(&ofn, 0, sizeof(ofn));
+ ofn.lStructSize = sizeof(ofn);
+ ofn.hwndOwner = FindWindow(NULL, PROGNAME);
+ // Windows' dialog extensions' string
+ ofn.lpstrFilter = _("SubRip Files (*.srt)\0*.srt\0Text Files (*.txt)\0*.txt\0");
+ ofn.lpstrTitle = "";
+ ofn.lpstrFile = filename;
+ ofn.nMaxFile = MAX_PATH;
+ ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+ ofn.lpstrDefExt = "srt";
+ if (GetOpenFileName(&ofn)) {
+	if (!(ffile = fopen(filename, "r"))) {
+		file_error(filename, main_window, GTK_MESSAGE_ERROR, ERR_MSG_CAPTION, ERR_READING_FILE);
+		return ;
+	}
+*/
+
+#ifdef WIN32
+ GtkFileFilter *srt_filter = gtk_file_filter_new();
+ gtk_file_filter_add_pattern(srt_filter, "*.srt");
+ gtk_file_filter_set_name(srt_filter, _("SubRip subtitles (*.srt)"));
+ GtkFileFilter *text_filter = gtk_file_filter_new();
+ gtk_file_filter_add_pattern(text_filter, "*.txt");
+ gtk_file_filter_set_name(text_filter, _("Text files (*.txt)"));
+#else
  GtkFileFilter *srt_filter = gtk_file_filter_new();
  gtk_file_filter_add_mime_type(srt_filter, "application/x-subrip");
- gtk_file_filter_set_name(srt_filter, _("SubRip subtitles (*srt)"));
+ gtk_file_filter_set_name(srt_filter, _("SubRip subtitles (*.srt)"));
  GtkFileFilter *text_filter = gtk_file_filter_new();
  gtk_file_filter_add_mime_type(text_filter, "text/plain");
  gtk_file_filter_set_name(text_filter, _("Plain text"));
+#endif
  GtkWidget *filedialog = gtk_file_chooser_dialog_new(_("Open File for analysing"), 
 							GTK_WINDOW(main_window), GTK_FILE_CHOOSER_ACTION_OPEN,
 							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN,
@@ -384,18 +427,28 @@ static void open_item_click(GtkWidget *widget, gpointer data)
  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(filedialog), text_filter);
  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(filedialog), srt_filter);
  gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(filedialog), srt_filter);
+
  if (gtk_dialog_run(GTK_DIALOG(filedialog)) == GTK_RESPONSE_ACCEPT) {
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filedialog));
+#ifdef WIN32
+	gchar *lfilename = g_locale_from_utf8(filename, -1, NULL, NULL, NULL);
+	if (!(ffile = fopen(lfilename, "r"))) {
+		gtk_widget_destroy(filedialog);
+		file_error(lfilename, main_window, GTK_MESSAGE_ERROR, ERR_MSG_CAPTION, ERR_READING_FILE);
+		return ;
+	}
+#else
 	if (!(ffile = fopen(filename, "r"))) {
 		gtk_widget_destroy(filedialog);
 		file_error(filename, main_window, GTK_MESSAGE_ERROR, ERR_MSG_CAPTION, ERR_READING_FILE);
 		return ;
-	 }
+	}
+#endif
+	gtk_list_store_clear(store_model);
 	if (words != NULL) {
 		free(user_words.by_az);
 		free_words(words);
 		words = NULL;
-		gtk_list_store_clear(store_model);
 	} else {
 		gtk_widget_set_sensitive(GTK_WIDGET(find_label), TRUE);
 		gtk_widget_set_sensitive(GTK_WIDGET(find_entry), TRUE);
@@ -408,13 +461,23 @@ static void open_item_click(GtkWidget *widget, gpointer data)
 	selected_filter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(filedialog));
 	filter_name = gtk_file_filter_get_name(GTK_FILE_FILTER(selected_filter));
 	clear_sentences();
-	if (!strcmp(filter_name, _("Plain text"))) {
+#ifdef WIN32
+	if (!strcmp(filter_name, _("Text files (*.txt)"))) {
 		if (process_plain_text(ffile))
 			file_error("", main_window, GTK_MESSAGE_WARNING, WARN_MSG_CAPTION, WARN_NON_UTF8_CHARS);
-	} else if (!strcmp(filter_name, _("SubRip subtitles (*srt)"))) {
+	} else if (!strcmp(filter_name, _("SubRip subtitles (*.srt)"))) {
 		if (process_srt(ffile))
 			file_error("", main_window, GTK_MESSAGE_WARNING, WARN_MSG_CAPTION, WARN_NON_UTF8_CHARS);
 	}
+#else
+	if (!strcmp(filter_name, _("Plain text"))) {
+		if (process_plain_text(ffile))
+			file_error("", main_window, GTK_MESSAGE_WARNING, WARN_MSG_CAPTION, WARN_NON_UTF8_CHARS);
+	} else if (!strcmp(filter_name, _("SubRip subtitles (*.srt)"))) {
+		if (process_srt(ffile))
+			file_error("", main_window, GTK_MESSAGE_WARNING, WARN_MSG_CAPTION, WARN_NON_UTF8_CHARS);
+	}
+#endif
 	user_words = get_sorted(words);
 	fill_list(user_words.by_az);
 	fclose(ffile);
@@ -424,6 +487,7 @@ static void open_item_click(GtkWidget *widget, gpointer data)
 	sprintf(status_msg, _("%d words were picked up from '%s'"), user_words.count, file);
 	gtk_statusbar_pop(GTK_STATUSBAR(statusbar), id);
 	gtk_statusbar_push(GTK_STATUSBAR(statusbar), id, status_msg);
+	g_free(filename);
  }
  gtk_widget_destroy(filedialog);
 }
@@ -441,6 +505,18 @@ static void save_words_item_click(GtkWidget *widget, gpointer data)
 									GTK_RESPONSE_ACCEPT, NULL);
  if (gtk_dialog_run(GTK_DIALOG(filedialog)) == GTK_RESPONSE_ACCEPT) {
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filedialog));
+#ifdef WIN32
+	gchar *lfilename = g_locale_from_utf8(filename, -1, NULL, NULL, NULL);
+	/*to add or not to add ".txt" extension to the filename?*/
+	if (!(savefile = fopen(lfilename, "w"))) {
+		gtk_widget_destroy(filedialog);
+		file_error(filename, main_window, GTK_MESSAGE_ERROR, ERR_MSG_CAPTION, ERR_SAVING_WORDS);
+		return ;
+	}
+	save_words(savefile, user_words, save_user_words);
+	fclose(savefile);
+	g_free(lfilename);
+#else
 	if (!(savefile = fopen(filename, "w"))) {
 		gtk_widget_destroy(filedialog);
 		file_error(filename, main_window, GTK_MESSAGE_ERROR, ERR_MSG_CAPTION, ERR_SAVING_WORDS);
@@ -448,6 +524,7 @@ static void save_words_item_click(GtkWidget *widget, gpointer data)
 	}
 	save_words(savefile, user_words, save_user_words);
 	fclose(savefile);
+#endif
  }
  gtk_widget_destroy(filedialog);
 }
@@ -466,11 +543,21 @@ static void save_text_item_click(GtkWidget *widget, gpointer data)
 									GTK_RESPONSE_ACCEPT, NULL);
  if (gtk_dialog_run(GTK_DIALOG(filedialog)) == GTK_RESPONSE_ACCEPT) {
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filedialog));
+#ifdef WIN32
+	gchar *lfilename = g_locale_from_utf8(filename, -1, NULL, NULL, NULL);
+	if (!(savefile = fopen(lfilename, "w"))) {
+		gtk_widget_destroy(filedialog);
+		file_error(filename, main_window, GTK_MESSAGE_ERROR, ERR_MSG_CAPTION, ERR_SAVING_WORDS);
+		return ;
+	}
+	g_free(lfilename);
+#else
 	if (!(savefile = fopen(filename, "w"))) {
 		gtk_widget_destroy(filedialog);
 		file_error(filename, main_window, GTK_MESSAGE_ERROR, ERR_MSG_CAPTION, ERR_SAVING_TEXT);
 		return ;
 	}
+#endif
 	GtkTextIter start, end;
 	GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(sentences_text));
 	gtk_text_buffer_get_start_iter(buffer, &start);
@@ -524,6 +611,7 @@ static void website_click(GtkAboutDialog *about, const gchar *link_, gpointer da
 
 static void about_item_click(GtkWidget *widget, gpointer data)
 {
+ struct stat st;
  const gchar url[] = {"http://code.google.com/p/wordxtract/"};
  const gchar comment[] = {N_("WordXtract is a text and subtitle parser\n which shows list of unique words\n from the file.")}; 
  const gchar copyright[] = {"Copyright \xc2\xa9 2009 by Borisov Alexandr"};

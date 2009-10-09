@@ -138,6 +138,7 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
+WINDRES = @WINDRES@
 XGETTEXT = @XGETTEXT@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
@@ -181,11 +182,11 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 wordxtractlocaledir = @wordxtractlocaledir@
-desktopdir = $(datadir)/applications
-desktop_in_files = wordxtract.desktop.in
-desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
-EXTRA_DIST = $(desktop_in_files)
-DISTCLEANFILES = wordxtract.desktop
+@WIN32_FALSE@desktopdir = $(datadir)/applications
+@WIN32_FALSE@desktop_in_files = wordxtract.desktop.in
+@WIN32_FALSE@desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
+@WIN32_FALSE@EXTRA_DIST = $(desktop_in_files)
+@WIN32_FALSE@DISTCLEANFILES = wordxtract.desktop
 all: all-am
 
 .SUFFIXES:
@@ -367,7 +368,7 @@ uninstall-am: uninstall-desktopDATA
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
 	pdf-am ps ps-am uninstall uninstall-am uninstall-desktopDATA
 
-@INTLTOOL_DESKTOP_RULE@
+@WIN32_FALSE@    @INTLTOOL_DESKTOP_RULE@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

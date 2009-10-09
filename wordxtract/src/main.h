@@ -57,7 +57,11 @@
 /*other*/
 #define PATH_LENGTH 50
 #define PROGNAME "WordXtract"
+#ifdef WIN32
+#define OPT_FOLDER "../options"
+#else
 #define OPT_FOLDER "/.wordxtract"
+#endif
 #define CONF_FILE "/config"
 #define OPTION_LENGTH 30
 
