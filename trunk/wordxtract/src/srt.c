@@ -123,7 +123,7 @@ static int get_srt_tag_length(char *line)
 						break;
 					case 's':
 						taglength += 6;
-						while isdigit(line[taglength])
+						while (isdigit(line[taglength]))
 							taglength++;
 						taglength++;
 						break;

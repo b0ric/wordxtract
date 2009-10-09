@@ -6,6 +6,18 @@ AM_INIT_AUTOMAKE([-Wall -Werror dist-bzip2])
 AC_CONFIG_SRCDIR([src/dict.h])
 AC_CONFIG_HEADER([config.h])
 
+# platform configuration
+case "${host}" in
+    i[[3456789]]86-mingw32*)
+    WIN32="yes"
+    #checking platform-dependent tools
+    AC_CHECK_TOOL(WINDRES, windres)
+    ;;
+    *cygwin*) WIN32="yes";;
+    *) WIN32="no" ;;
+esac
+AM_CONDITIONAL([WIN32], test "$WIN32" = "yes")
+
 # i18n support
 AC_PROG_INTLTOOL([0.23])
 ALL_LINGUAS="ru"
@@ -18,7 +30,7 @@ AM_GLIB_GNU_GETTEXT
 wordxtractlocaledir='${datadir}/locale'
 AC_SUBST(wordxtractlocaledir)
 
-# Checks for programs.
+# Checks for gtk+-2.0.
 AC_PROG_CC
 AM_PATH_GTK_2_0([2.12.0])
 PKG_CHECK_MODULES(GTK, gtk+-2.0,, exit)
@@ -41,10 +53,11 @@ AC_CHECK_FUNCS([mkdir])
 
 AC_CONFIG_FILES([
 Makefile
+data/Makefile
+pixmaps/Makefile
+po/Makefile.in
 src/Makefile
 src/pixmaps/Makefile
-po/Makefile.in
-pixmaps/Makefile
-data/Makefile
+src/win32/Makefile
 ])
 AC_OUTPUT
