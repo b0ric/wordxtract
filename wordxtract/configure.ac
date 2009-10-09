@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
-AC_PREREQ([wordxtract], [0.1], [b0ric.alex@gmail.com])
-AC_INIT(wordxtract, 0.1, b0ric.alex@gmail.com)
+AC_PREREQ([wordxtract], [0.2], [b0ric.alex@gmail.com])
+AC_INIT(wordxtract, 0.2, b0ric.alex@gmail.com)
 AM_INIT_AUTOMAKE([-Wall -Werror dist-bzip2])
 AC_CONFIG_SRCDIR([src/dict.h])
 AC_CONFIG_HEADER([config.h])

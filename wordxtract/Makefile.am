@@ -9,7 +9,8 @@ INTLTOOL_FILES = 		\
 	intltool-update.in
 EXTRA_DIST = $(INTLTOOL_FILES)	\
 	dict			\
-	bootstrap
+	bootstrap		\
+	configure.i586-mingw32msvc
 DISTCLEANFILES = 		\
 	intltool-extract	\
 	intltool-merge		\
