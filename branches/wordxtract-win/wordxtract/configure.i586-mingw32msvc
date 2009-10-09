@@ -1,4 +1,5 @@
 #!/bin/sh
  
-PKG_CONFIG_LIBDIR=/usr/i586-mingw32msvc/lib/pkgconfig \
-PKG_CONFIG_PATH=/usr/i586-mingw32msvc/lib/pkgconfig ./configure --host=i586-mingw32msvc $*
+PKG_CONFIG_LIBDIR=/usr/i586-mingw32msvc/lib/pkgconfig	\
+PKG_CONFIG_PATH=/usr/i586-mingw32msvc/lib/pkgconfig	\
+./configure --host=i586-mingw32msvc --prefix=$(pwd)/win32bin $*

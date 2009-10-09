@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordxtract 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-02 19:52+0300\n"
+"POT-Creation-Date: 2009-10-09 13:19+0300\n"
 "PO-Revision-Date: 2009-08-24 14:58+0300\n"
 "Last-Translator: Borisov Alexandr <b0ric.alex@gmail.com>\n"
 "Language-Team: Russian\n"
@@ -149,7 +149,7 @@ msgstr "Изменения словаря: "
 msgid "Add word: "
 msgstr "Добавить слово: "
 
-#: ../src/dictwin.c:170 ../src/mainwin.c:616
+#: ../src/dictwin.c:170 ../src/mainwin.c:704
 msgid "Add word to the dictionary"
 msgstr "Добавить слово в словарь"
 
@@ -178,13 +178,12 @@ msgstr "Удалить это слово из словаря"
 msgid "Clear the dictionary"
 msgstr "Очистить словарь"
 
-#: ../src/dictwin.c:313 ../src/dictwin.c:349 ../src/mainwin.c:376
-#: ../src/mainwin.c:414
+#: ../src/dictwin.c:313 ../src/dictwin.c:349
 msgid "SubRip subtitles (*srt)"
 msgstr "Субтитры SubRip (*srt)"
 
-#: ../src/dictwin.c:316 ../src/dictwin.c:346 ../src/mainwin.c:379
-#: ../src/mainwin.c:411
+#: ../src/dictwin.c:316 ../src/dictwin.c:346 ../src/mainwin.c:421
+#: ../src/mainwin.c:473
 msgid "Plain text"
 msgstr "Текстовый файл"
 
@@ -200,83 +199,83 @@ msgstr "<b>Это слово уже есть в списке!</b>"
 msgid "<b>This word is in the dictionary!</b>"
 msgstr "<b>Это слово уже есть в словаре!</b>"
 
-#: ../src/mainwin.c:123
+#: ../src/mainwin.c:130
 msgid "_File"
 msgstr "_Файл"
 
-#: ../src/mainwin.c:125 ../src/mainwin.c:194
+#: ../src/mainwin.c:132 ../src/mainwin.c:201
 msgid "Open file to analyse"
 msgstr "Открыть файл для анализа"
 
-#: ../src/mainwin.c:133
+#: ../src/mainwin.c:140
 msgid "Words"
 msgstr "Слова"
 
-#: ../src/mainwin.c:135 ../src/mainwin.c:199
+#: ../src/mainwin.c:142 ../src/mainwin.c:206
 msgid "Save list of words to file"
 msgstr "Сохранить список слов в файл"
 
-#: ../src/mainwin.c:140
+#: ../src/mainwin.c:147
 msgid "Text"
 msgstr "Текст"
 
-#: ../src/mainwin.c:142
+#: ../src/mainwin.c:149
 msgid "Save text from which words were picked up"
 msgstr "Сохранить текст из которого были выбраны слова"
 
-#: ../src/mainwin.c:148 ../src/mainwin.c:212
+#: ../src/mainwin.c:155 ../src/mainwin.c:219
 msgid "Close the program"
 msgstr "Закрыть программу"
 
-#: ../src/mainwin.c:161
+#: ../src/mainwin.c:168
 msgid "_Edit"
 msgstr "_Редактировать"
 
-#: ../src/mainwin.c:162
+#: ../src/mainwin.c:169
 msgid "Dictionary"
 msgstr "Словарь"
 
-#: ../src/mainwin.c:163 ../src/mainwin.c:206
+#: ../src/mainwin.c:170 ../src/mainwin.c:213
 msgid "View and edit dictionary"
 msgstr "Смотреть и редактировать словарь"
 
-#: ../src/mainwin.c:170
+#: ../src/mainwin.c:177
 msgid "Change application settings"
 msgstr "Изменить настройки приложения"
 
-#: ../src/mainwin.c:179
+#: ../src/mainwin.c:186
 msgid "_Help"
 msgstr "_Помощь"
 
-#: ../src/mainwin.c:181
+#: ../src/mainwin.c:188
 msgid "About the program"
 msgstr "О программе"
 
-#: ../src/mainwin.c:268
+#: ../src/mainwin.c:275
 msgid "Find: "
 msgstr "Искать:"
 
-#: ../src/mainwin.c:285
+#: ../src/mainwin.c:292
 msgid "Find word"
 msgstr "Найти слово"
 
-#: ../src/mainwin.c:295
+#: ../src/mainwin.c:302
 msgid "Previous word"
 msgstr "Предыдущее слово"
 
-#: ../src/mainwin.c:305
+#: ../src/mainwin.c:312
 msgid "Next word"
 msgstr "Следующее слово"
 
-#: ../src/mainwin.c:315
+#: ../src/mainwin.c:322
 msgid "Cleanup highlighting"
 msgstr "Убрать подсветку"
 
-#: ../src/mainwin.c:324
+#: ../src/mainwin.c:331
 msgid "Open file to pick up words from it..."
 msgstr "Откройте файл для сбора слов..."
 
-#: ../src/mainwin.c:330
+#: ../src/mainwin.c:337
 msgid ""
 "\n"
 "\t\t\tWelcome to WordXtract\n"
@@ -316,29 +315,38 @@ msgstr ""
 "\n"
 "  Удачи!\n"
 
-#: ../src/mainwin.c:380
+#: ../src/mainwin.c:411 ../src/mainwin.c:418 ../src/mainwin.c:468
+#: ../src/mainwin.c:476
+msgid "SubRip subtitles (*.srt)"
+msgstr "Субтитры SubRip (*.srt)"
+
+#: ../src/mainwin.c:414 ../src/mainwin.c:465
+msgid "Text files (*.txt)"
+msgstr "Текстовые файлы (*.txt)"
+
+#: ../src/mainwin.c:423
 msgid "Open File for analysing"
 msgstr "Открыть файл для анализа"
 
-#: ../src/mainwin.c:423 ../src/mainwin.c:424
+#: ../src/mainwin.c:486 ../src/mainwin.c:487
 #, c-format
 msgid "%d words were picked up from '%s'"
 msgstr "%d слов было выбрано из файла '%s'"
 
-#: ../src/mainwin.c:438
+#: ../src/mainwin.c:502
 msgid "Save list of words as..."
 msgstr "Сохранить список слов как..."
 
-#: ../src/mainwin.c:463
+#: ../src/mainwin.c:540
 msgid "Save text as..."
 msgstr "Сохранить текст как..."
 
-#: ../src/mainwin.c:520
+#: ../src/mainwin.c:607
 #, c-format
 msgid "Failed to open URI: %s\n"
 msgstr "Ошибка открытия URI: %s\n"
 
-#: ../src/mainwin.c:528
+#: ../src/mainwin.c:616
 msgid ""
 "WordXtract is a text and subtitle parser\n"
 " which shows list of unique words\n"
@@ -348,7 +356,7 @@ msgstr ""
 " и текстовых файлов которая создает список\n"
 " уникальных слов из данного файла."
 
-#: ../src/mainwin.c:530
+#: ../src/mainwin.c:618
 msgid ""
 "WordXtract is free software: you can\n"
 "redistribute it and/or modify it under the\n"
@@ -386,23 +394,23 @@ msgstr ""
 "General Public License along with WordXtract.\n"
 "If not, see <http://www.gnu.org/licenses/>."
 
-#: ../src/mainwin.c:547
+#: ../src/mainwin.c:635
 msgid "ru: Borisov Alexandr <b0ric.alex@gmail.com>"
 msgstr "ru: Борисов Алексадр <b0ric.alex@gmail.com>"
 
-#: ../src/mainwin.c:604
+#: ../src/mainwin.c:692
 msgid "Search word"
 msgstr "Искать слово"
 
-#: ../src/mainwin.c:608
+#: ../src/mainwin.c:696
 msgid "Show sentenses word appears in"
 msgstr "Показать предложения где встречается слово"
 
-#: ../src/mainwin.c:612
+#: ../src/mainwin.c:700
 msgid "Add to the dictionary"
 msgstr "Добавить слово в словарь"
 
-#: ../src/mainwin.c:757
+#: ../src/mainwin.c:845
 #, c-format
 msgid "Word '%s' was not found"
 msgstr "Слово '%s' было не найдено"

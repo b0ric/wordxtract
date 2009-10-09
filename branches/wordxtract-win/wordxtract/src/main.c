@@ -43,7 +43,11 @@ int main(int argc, char *argv[])
  FILE *fdict;
 
  gtk_init(&argc, &argv);
+#ifdef WIN32
+ bindtextdomain(GETTEXT_PACKAGE, "share/locale");
+#else
  bindtextdomain(GETTEXT_PACKAGE, LOCALE_DIR);
+#endif
  bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
  textdomain(GETTEXT_PACKAGE);
  fill_vars();
@@ -76,8 +80,12 @@ int main(int argc, char *argv[])
 
 static void fill_vars()
 {
+#ifdef WIN32
+ strcpy(optpath, OPT_FOLDER);
+#else
  strcpy(optpath, getenv("HOME"));
  strcat(optpath, OPT_FOLDER);
+#endif
  strcat(dictfile, optpath);
  strcat(dictfile, DICT_FILE);
  strcat(conffile, optpath);
@@ -87,7 +95,11 @@ static void fill_vars()
 
 void create_config(char *path)
 {
- mode_t mode_0755 = 0755; //S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH;
+#ifdef WIN32
+ mode_t mode_0755 = S_IRWXU;
+#else
+ mode_t mode_0755 = S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH;
+#endif
  struct stat st;
  FILE *conf;
  char file[PATH_LENGTH] = {0};

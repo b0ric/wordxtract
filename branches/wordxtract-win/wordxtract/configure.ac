@@ -8,8 +8,12 @@ AC_CONFIG_HEADER([config.h])
 
 # platform configuration
 case "${host}" in
-    i[[3456789]]86-mingw32*) WIN32="yes" ;;
-    *cygwin*) WIN32="yes" ;;
+    i[[3456789]]86-mingw32*)
+    WIN32="yes"
+    #checking platform-dependent tools
+    AC_CHECK_TOOL(WINDRES, windres)
+    ;;
+    *cygwin*) WIN32="yes";;
     *) WIN32="no" ;;
 esac
 AM_CONDITIONAL([WIN32], test "$WIN32" = "yes")
@@ -49,10 +53,11 @@ AC_CHECK_FUNCS([mkdir])
 
 AC_CONFIG_FILES([
 Makefile
+data/Makefile
+pixmaps/Makefile
+po/Makefile.in
 src/Makefile
 src/pixmaps/Makefile
-po/Makefile.in
-pixmaps/Makefile
-data/Makefile
+src/win32/Makefile
 ])
 AC_OUTPUT

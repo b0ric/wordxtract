@@ -32,7 +32,11 @@ static void create_dict_file(char *path);
 
 void create_dict_file(char *path)
 {
- mode_t mode_0755 = 0755; //S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH;
+#ifdef WIN32
+ mode_t mode_0755 = S_IRWXU;
+#else
+ mode_t mode_0755 = S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH;
+#endif
  struct stat st;
  FILE *fdict;
  char file[PATH_LENGTH] = {0};

@@ -53,12 +53,28 @@ Compilation
 
 	http://www.gtk.org/download-windows.html
     
-    For the program to be run properly you should create 
-    gdk-pixbuf.loaders file in the PROG_DIR/etc/gtk-2.0 directory:
+    And one more thing is required for  the program to be run properly:
+    you should create gdk-pixbuf.loaders file in the PROG_DIR/etc/gtk-2.0
+    directory. To accomplish this task you should copy
     
+	gdk-pixbuf-query-loaders.exe 
+	libpixbufloader-png.dll
+    
+    binaries to the program folder from the gtk distribution for windows.
+    Rough approximation of this explanation is:
+    
+	cp gdk-pixbuf-query-loaders.exe PROG_DIR
+	mkdir lib
+	mkdir lib\gtk-2.0
+	mkdir lib\gtk-2.0\2.10.0
+	mkdir lib\gtk-2.0\2.10.0\loaders
+	cp libpixbufloader-png.dll PROG_DIR\lib\gtk-2.0\2.10.0\loaders
 	mkdir etc
-	mkdir etc/gtk-2.0
-	gdk-pixbuf-query-loaders > etc/gtk-2.0/gdk-pixbuf.loaders
+	mkdir etc\gtk-2.0
+	gdk-pixbuf-query-loaders.exe > etc\gtk-2.0\gdk-pixbuf.loaders
+    
+    You can also dowload precompiled binaries from the wordxtract website
+    and pick up all required binaries there.
     
 Running
 =======

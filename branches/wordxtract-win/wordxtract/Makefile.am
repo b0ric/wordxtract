@@ -1,7 +1,7 @@
 #Makefile.am for WordExtract project
 #Process this file with automake to produce Makefile.in
 
-SUBDIRS = src po pixmaps data
+SUBDIRS = data pixmaps po src
 
 INTLTOOL_FILES = 		\
 	intltool-extract.in	\
@@ -14,6 +14,3 @@ DISTCLEANFILES = 		\
 	intltool-extract	\
 	intltool-merge		\
 	intltool-update
-
-
-
