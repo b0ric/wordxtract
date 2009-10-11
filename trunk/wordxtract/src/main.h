@@ -52,6 +52,7 @@
 #define ERR_SAVING_WORDS _("Could not save words to file ")
 #define ERR_SAVING_TEXT _("Could not save text to file ")
 #define WARN_NON_UTF8_CHARS _("File you've chosen contains non UTF-8 characters. Result can be unpredictable!")
+#define WARN_ALREADY_EXISTS _(" already exists. Do you want to owerwrite it?")
 #define CONFIRM_QUIT_MSG _("Are you sure to exit?")
 
 /*other*/

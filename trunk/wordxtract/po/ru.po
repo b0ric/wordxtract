@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordxtract 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-09 22:41+0300\n"
+"POT-Creation-Date: 2009-10-11 03:18+0300\n"
 "PO-Revision-Date: 2009-08-24 14:58+0300\n"
 "Last-Translator: Borisov Alexandr <b0ric.alex@gmail.com>\n"
 "Language-Team: Russian\n"
@@ -149,7 +149,7 @@ msgstr "Изменения словаря: "
 msgid "Add word: "
 msgstr "Добавить слово: "
 
-#: ../src/dictwin.c:170 ../src/mainwin.c:704
+#: ../src/dictwin.c:170 ../src/mainwin.c:725
 msgid "Add word to the dictionary"
 msgstr "Добавить слово в словарь"
 
@@ -333,20 +333,20 @@ msgstr "Открыть файл для анализа"
 msgid "%d words were picked up from '%s'"
 msgstr "%d слов было выбрано из файла '%s'"
 
-#: ../src/mainwin.c:502
+#: ../src/mainwin.c:504
 msgid "Save list of words as..."
 msgstr "Сохранить список слов как..."
 
-#: ../src/mainwin.c:540
+#: ../src/mainwin.c:561
 msgid "Save text as..."
 msgstr "Сохранить текст как..."
 
-#: ../src/mainwin.c:607
+#: ../src/mainwin.c:628
 #, c-format
 msgid "Failed to open URI: %s\n"
 msgstr "Ошибка открытия URI: %s\n"
 
-#: ../src/mainwin.c:616
+#: ../src/mainwin.c:637
 msgid ""
 "WordXtract is a text and subtitle parser\n"
 " which shows list of unique words\n"
@@ -356,7 +356,7 @@ msgstr ""
 " и текстовых файлов которая создает список\n"
 " уникальных слов из данного файла."
 
-#: ../src/mainwin.c:618
+#: ../src/mainwin.c:639
 msgid ""
 "WordXtract is free software: you can\n"
 "redistribute it and/or modify it under the\n"
@@ -394,23 +394,23 @@ msgstr ""
 "General Public License along with WordXtract.\n"
 "If not, see <http://www.gnu.org/licenses/>."
 
-#: ../src/mainwin.c:635
+#: ../src/mainwin.c:656
 msgid "ru: Borisov Alexandr <b0ric.alex@gmail.com>"
 msgstr "ru: Борисов Алексадр <b0ric.alex@gmail.com>"
 
-#: ../src/mainwin.c:692
+#: ../src/mainwin.c:713
 msgid "Search word"
 msgstr "Искать слово"
 
-#: ../src/mainwin.c:696
+#: ../src/mainwin.c:717
 msgid "Show sentenses word appears in"
 msgstr "Показать предложения где встречается слово"
 
-#: ../src/mainwin.c:700
+#: ../src/mainwin.c:721
 msgid "Add to the dictionary"
 msgstr "Добавить слово в словарь"
 
-#: ../src/mainwin.c:845
+#: ../src/mainwin.c:866
 #, c-format
 msgid "Word '%s' was not found"
 msgstr "Слово '%s' было не найдено"
@@ -449,6 +449,10 @@ msgstr ""
 "непредсказуемым!"
 
 #: ../src/main.h:55
+msgid " already exists. Do you want to owerwrite it?"
+msgstr " уже существует. Перезаписать его?"
+
+#: ../src/main.h:56
 msgid "Are you sure to exit?"
 msgstr "Вы действительно желаете выйти?"
 
