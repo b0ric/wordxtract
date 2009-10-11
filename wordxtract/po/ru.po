@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wordxtract 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-11 03:18+0300\n"
+"POT-Creation-Date: 2009-10-11 03:37+0300\n"
 "PO-Revision-Date: 2009-08-24 14:58+0300\n"
 "Last-Translator: Borisov Alexandr <b0ric.alex@gmail.com>\n"
 "Language-Team: Russian\n"
@@ -149,7 +149,7 @@ msgstr "Изменения словаря: "
 msgid "Add word: "
 msgstr "Добавить слово: "
 
-#: ../src/dictwin.c:170 ../src/mainwin.c:725
+#: ../src/dictwin.c:170 ../src/mainwin.c:749
 msgid "Add word to the dictionary"
 msgstr "Добавить слово в словарь"
 
@@ -337,16 +337,16 @@ msgstr "%d слов было выбрано из файла '%s'"
 msgid "Save list of words as..."
 msgstr "Сохранить список слов как..."
 
-#: ../src/mainwin.c:561
+#: ../src/mainwin.c:563
 msgid "Save text as..."
 msgstr "Сохранить текст как..."
 
-#: ../src/mainwin.c:628
+#: ../src/mainwin.c:652
 #, c-format
 msgid "Failed to open URI: %s\n"
 msgstr "Ошибка открытия URI: %s\n"
 
-#: ../src/mainwin.c:637
+#: ../src/mainwin.c:661
 msgid ""
 "WordXtract is a text and subtitle parser\n"
 " which shows list of unique words\n"
@@ -356,7 +356,7 @@ msgstr ""
 " и текстовых файлов которая создает список\n"
 " уникальных слов из данного файла."
 
-#: ../src/mainwin.c:639
+#: ../src/mainwin.c:663
 msgid ""
 "WordXtract is free software: you can\n"
 "redistribute it and/or modify it under the\n"
@@ -394,23 +394,23 @@ msgstr ""
 "General Public License along with WordXtract.\n"
 "If not, see <http://www.gnu.org/licenses/>."
 
-#: ../src/mainwin.c:656
+#: ../src/mainwin.c:680
 msgid "ru: Borisov Alexandr <b0ric.alex@gmail.com>"
 msgstr "ru: Борисов Алексадр <b0ric.alex@gmail.com>"
 
-#: ../src/mainwin.c:713
+#: ../src/mainwin.c:737
 msgid "Search word"
 msgstr "Искать слово"
 
-#: ../src/mainwin.c:717
+#: ../src/mainwin.c:741
 msgid "Show sentenses word appears in"
 msgstr "Показать предложения где встречается слово"
 
-#: ../src/mainwin.c:721
+#: ../src/mainwin.c:745
 msgid "Add to the dictionary"
 msgstr "Добавить слово в словарь"
 
-#: ../src/mainwin.c:866
+#: ../src/mainwin.c:890
 #, c-format
 msgid "Word '%s' was not found"
 msgstr "Слово '%s' было не найдено"
