@@ -495,6 +495,8 @@ static void open_item_click(GtkWidget *widget, gpointer data)
 static void save_words_item_click(GtkWidget *widget, gpointer data)
 {
  extern void file_error(char *, GtkWidget *, GtkMessageType, char *, char *);
+
+ struct stat st;
  FILE *savefile;
  gchar *filename;
  gchar *errstr;
@@ -505,25 +507,44 @@ static void save_words_item_click(GtkWidget *widget, gpointer data)
 									GTK_RESPONSE_ACCEPT, NULL);
  if (gtk_dialog_run(GTK_DIALOG(filedialog)) == GTK_RESPONSE_ACCEPT) {
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filedialog));
+
 #ifdef WIN32
+	/* converting filename to windows' locale codeset */
 	gchar *lfilename = g_locale_from_utf8(filename, -1, NULL, NULL, NULL);
-	/*to add or not to add ".txt" extension to the filename?*/
-	if (!(savefile = fopen(lfilename, "w"))) {
-		gtk_widget_destroy(filedialog);
-		file_error(filename, main_window, GTK_MESSAGE_ERROR, ERR_MSG_CAPTION, ERR_SAVING_WORDS);
-		return ;
-	}
-	save_words(savefile, user_words, save_user_words);
-	fclose(savefile);
-	g_free(lfilename);
+	/* to add or not to add ".txt" or ".srt" extension to the filename? */
 #else
-	if (!(savefile = fopen(filename, "w"))) {
-		gtk_widget_destroy(filedialog);
-		file_error(filename, main_window, GTK_MESSAGE_ERROR, ERR_MSG_CAPTION, ERR_SAVING_WORDS);
-		return ;
+	/* on linux we just refer to the orginal string */
+	gchar *lfilename = filename;
+#endif
+
+	gint resp = GTK_RESPONSE_YES;
+	/* whether file already exists or not? */
+	if (!stat(lfilename, &st)) {
+		char *errstr = malloc(strlen(filename) + strlen(WARN_ALREADY_EXISTS)+1);
+		strcpy(errstr, filename);
+		strcat(errstr, WARN_ALREADY_EXISTS);
+		GtkWidget *msg = gtk_message_dialog_new(GTK_WINDOW(main_window), 
+								GTK_DIALOG_DESTROY_WITH_PARENT,	GTK_MESSAGE_WARNING,
+								GTK_BUTTONS_YES_NO, errstr);
+		gtk_window_set_title(GTK_WINDOW(msg), WARN_MSG_CAPTION);
+		resp = gtk_dialog_run(GTK_DIALOG(msg));
+		gtk_widget_destroy(msg);
+		free(errstr);
 	}
-	save_words(savefile, user_words, save_user_words);
-	fclose(savefile);
+	if (resp == GTK_RESPONSE_YES) {
+		if (!(savefile = fopen(lfilename, "w"))) {
+			gtk_widget_destroy(filedialog);
+#ifdef WIN32
+			g_free(lfilename);
+#endif
+			file_error(filename, main_window, GTK_MESSAGE_ERROR, ERR_MSG_CAPTION, ERR_SAVING_WORDS);
+			return ;
+		}
+		save_words(savefile, user_words, save_user_words);
+		fclose(savefile);
+	}
+#ifdef WIN32
+			g_free(lfilename);
 #endif
  }
  gtk_widget_destroy(filedialog);
